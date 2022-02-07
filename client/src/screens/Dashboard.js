@@ -5,7 +5,7 @@ import Header from '../components/Header'
 import Paragraph from '../components/Paragraph'
 import Button from '../components/Button'
 import MenuRU from '../components/MenuRU'
-import HoraireTAN from '../components/HoraireTAN'
+import HoraireTAN from '../components/TanSchedule'
 import { ScrollView } from 'react-native'
 
 
@@ -15,8 +15,10 @@ export default function Dashboard({ navigation }) {
       <Background>
         <Header>Au menu ce midi</Header>
         <MenuRU />
-        <Header>La TAN (Ligne 2 direction Gare de Pont Rousseau) </Header>
-        <HoraireTAN />
+        <Button mode="contained"
+         onPress={() => navigation.navigate("TanScreen")}>
+          Horaires tan
+        </Button>
         <Header>Let’s start</Header>
         <Paragraph>
           Your amazing app starts here. Open you favorite code editor and start

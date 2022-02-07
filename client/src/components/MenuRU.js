@@ -17,6 +17,9 @@ class MenuRU extends Component {
         ).then(str => str.substring(17)
         ).then(all => {
             this.setState({ html: all })
+        }).catch(error => {
+            console.log(error);
+            this.setState({html: "Menu non communiqué"});
         });
         return menu
     }
