@@ -31,14 +31,14 @@ class MenuRU extends Component {
         const classesStyles = {
             'name': {
                 fontWeight: 'bold',
-                color: '#000000',
+                color: '#fab500',
                 fontSize: 15,
                 lineHeight: 17,
                 // textAlign: 'center',
                 marginBottom: 0,
             },
             'liste-plats': {
-                color: '#000000',
+                color: '#FFFFFF',
                 textDecorationLine: 'none',
                 fontSize: 14,
                 // , fontFamily: 'Montserrat-Bold',

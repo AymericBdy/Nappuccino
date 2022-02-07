@@ -10,10 +10,11 @@ export default function TextInput({ errorText, description, ...props }) {
         style={styles.input}
         selectionColor={theme.colors.primary}
         underlineColor="transparent"
+        outlineColor={theme.colors.secondary}
         mode="outlined"
         {...props}
       />
-      {description && !errorText ? (
+      {(description && !errorText) ? (
         <Text style={styles.description}>{description}</Text>
       ) : null}
       {errorText ? <Text style={styles.error}>{errorText}</Text> : null}
