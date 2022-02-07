@@ -4,7 +4,9 @@ var axios = require('axios')
 
 exports.timetable = async (req, res) => {
     //Tan api : get ecn station time table
-    const url = "https://open.tan.fr/ewp/horairesarret.json/ECSU/2/1"
+    const direction = req.params.direction;
+    console.log("Direction: "+direction);
+    const url = "https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
 
     const getData = async (url) => {
         try {

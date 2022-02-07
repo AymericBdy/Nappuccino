@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Paragraph from './Paragraph'
 import { Text } from 'react-native-paper'
+import Header from '../components/Header'
 import RenderHtml from 'react-native-render-html';
 import { useWindowDimensions, View, StyleSheet } from 'react-native';
 
@@ -17,6 +18,9 @@ class MenuRU extends Component {
         ).then(str => str.substring(17)
         ).then(all => {
             this.setState({ html: all })
+        }).catch(error => {
+            console.log(error);
+            this.setState({html: "Menu non communiqué"});
         });
         return menu
     }
@@ -47,11 +51,14 @@ class MenuRU extends Component {
         }
         // console.log('render menu ru')
         // console.log(this.state)
-        return <RenderHtml
-            contentWidth={100}
-            source={this.state}
-            classesStyles={classesStyles}
-        />
+        return <View>
+            <Header>Au menu ce midi</Header>
+            <RenderHtml
+                contentWidth={100}
+                source={this.state}
+                classesStyles={classesStyles}
+            />
+        </View>
     }
 
     componentDidMount() {

@@ -8,6 +8,6 @@ router.use(function timeLog (req, res, next) {
     next()
 })
 
-router.get('/horairesecn', TanController.timetable);
+router.get('/ecn/:direction', TanController.timetable);
 
 module.exports = router;
