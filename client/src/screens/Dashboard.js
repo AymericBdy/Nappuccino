@@ -13,8 +13,11 @@ export default function Dashboard({ navigation }) {
   return (
     <ScrollView>
       <Background>
-        <Header>Au menu ce midi</Header>
-        <MenuRU />
+        <Header>Naivation</Header>
+        <Button mode="contained"
+         onPress={() => navigation.navigate("RuScreen")}>
+          Menu RU
+        </Button>
         <Button mode="contained"
          onPress={() => navigation.navigate("TanScreen")}>
           Horaires tan

@@ -16,8 +16,8 @@ class HoraireTAN extends Component {
     }
 
     checkMenu(direction) {
-        var searchUrl = //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/1";
-        "http://192.168.0.21:3000/tan/ecn/"+direction; 
+        var searchUrl = "https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction; 
+        //"http://192.168.0.21:3000/tan/ecn/"+direction; 
         //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
         console.log('Getting tan for '+searchUrl);
         var menu = fetch(searchUrl).then(res => res.json()
