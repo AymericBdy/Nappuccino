@@ -7,6 +7,7 @@ import Background from './Background';
 import Header from './Header'
 import Button from './Button'
 import { theme } from '../core/theme'
+import BackendAdress from '../helpers/Backend';
 
 class HoraireTAN extends Component {
     state = {
@@ -16,6 +17,7 @@ class HoraireTAN extends Component {
     }
 
     checkMenu(direction) {
+        //todo use BackendAdress()+"tan/ecn/"+direction;//
         var searchUrl = "https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction; 
         //"http://192.168.0.21:3000/tan/ecn/"+direction; 
         //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
