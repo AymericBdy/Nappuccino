@@ -7,7 +7,7 @@ import { useWindowDimensions, View, StyleSheet } from 'react-native';
 
 class MenuRU extends Component {
     state = {
-        html: ["Menu indisponible"]
+        html: "Chargement du menu..."
     }
 
     checkMenu() {
