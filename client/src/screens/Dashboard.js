@@ -11,36 +11,34 @@ import { ScrollView } from 'react-native'
 
 export default function Dashboard({ navigation }) {
   return (
-    <ScrollView>
-      <Background>
-        <Header>Naivation</Header>
-        <Button mode="contained"
-         onPress={() => navigation.navigate("RuScreen")}>
-          Menu RU
-        </Button>
-        <Button mode="contained"
-         onPress={() => navigation.navigate("TanScreen")}>
-          Horaires tan
-        </Button>
-        <Header>Let’s start</Header>
-        <Paragraph>
-          Your amazing app starts here. Open you favorite code editor and start
-          editing this project.
-        </Paragraph>
-        <Button
-          mode="contained"
-          onPress={() =>
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'StartScreen' }],
-            })
-          }
-        >
-          Logout
-        </Button>
+    <Background>
+      <Header>Naivation</Header>
+      <Button mode="contained"
+        onPress={() => navigation.navigate("RuScreen")}>
+        Menu RU
+      </Button>
+      <Button mode="contained"
+        onPress={() => navigation.navigate("TanScreen")}>
+        Horaires tan
+      </Button>
+      <Header>Let’s start</Header>
+      <Paragraph>
+        Your amazing app starts here. Open you favorite code editor and start
+        editing this project.
+      </Paragraph>
+      <Button
+        mode="contained"
+        onPress={() =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'StartScreen' }],
+          })
+        }
+      >
+        Logout
+      </Button>
 
-      </Background>
-    </ScrollView>
+    </Background>
 
   )
 }
