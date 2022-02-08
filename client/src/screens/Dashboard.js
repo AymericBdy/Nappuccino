@@ -11,8 +11,8 @@ import { ScrollView } from 'react-native'
 
 export default function Dashboard({ navigation }) {
   return (
-    <ScrollView>
-      <Background>
+    <Background>
+      <ScrollView>
         <Header>Naivation</Header>
         <Button mode="contained"
          onPress={() => navigation.navigate("RuScreen")}>
@@ -39,8 +39,8 @@ export default function Dashboard({ navigation }) {
           Logout
         </Button>
 
-      </Background>
-    </ScrollView>
+      </ScrollView>
+    </Background>
 
   )
 }
