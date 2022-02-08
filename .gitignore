@@ -64,3 +64,4 @@ buck-out/
 
 # Vim swap
 *.swp
+*.swo
