@@ -65,3 +65,6 @@ buck-out/
 # Vim swap
 *.swp
 *.swo
+
+# postgres_data :
+/server/postgres_data/*
