@@ -4,15 +4,15 @@ import { theme } from '../core/theme'
 
 export default function Background({ children }) {
   return (
-    <ImageBackground
-      source={require('../assets/background_dot.png')}
-      resizeMode="repeat"
-      style={styles.background}
-    >
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        {children}
-      </KeyboardAvoidingView>
-    </ImageBackground>
+    // <ImageBackground
+    //   source={require('../assets/background_dot.png')}
+    //   resizeMode="repeat"
+    //   style={styles.background}
+    // >
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      {children}
+    </KeyboardAvoidingView>
+    // </ImageBackground >
   )
 }
 

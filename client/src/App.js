@@ -18,12 +18,14 @@ const Stack = createStackNavigator()
 export default function App() {
     return (
         <Provider theme={theme}>
-            <NavigationContainer>
+            <NavigationContainer
+                theme={{ colors: { background: theme.colors.surface } }}>
                 <Stack.Navigator
                     initialRouteName="StartScreen"
                     screenOptions={{
                         headerShown: false,
                     }}
+
                 >
                     <Stack.Screen name="StartScreen" component={StartScreen} />
                     <Stack.Screen name="LoginScreen" component={LoginScreen} />
