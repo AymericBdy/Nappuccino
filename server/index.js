@@ -6,6 +6,7 @@ app.use(express.static('public'))
 
 app.get('/', (req, res) => {
   res.send('Nappucinno application back-end')
+  console.log("Connection from : "+req.ip)
 })
 
 app.use('/ru', require('./routes/ru.route'));

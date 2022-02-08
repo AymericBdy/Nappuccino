@@ -61,3 +61,6 @@ buck-out/
 
 # VS Code
 .vscode/
+
+# Vim swap
+*.swp
