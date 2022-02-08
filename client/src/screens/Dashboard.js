@@ -12,7 +12,7 @@ import { ScrollView } from 'react-native'
 export default function Dashboard({ navigation }) {
   return (
     <Background>
-      <Header>Naivation</Header>
+      <Header>Navigation</Header>
       <Button mode="contained"
         onPress={() => navigation.navigate("RuScreen")}>
         Menu RU
