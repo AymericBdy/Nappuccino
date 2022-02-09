@@ -1,0 +1,19 @@
+pipeline {
+    agent { label "linux"}
+    stages {
+        stage("build") {
+            steps {
+                sh """
+                    docker build . -t nappuccino
+                """
+            }
+        }
+        stage("run") {
+            steps {
+                sh """
+                    docker run --rm -p 3000:3000 -d --name nappuccino-app  nappuccino
+                """
+            }
+        }
+    }
+}
