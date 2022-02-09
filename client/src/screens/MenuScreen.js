@@ -10,7 +10,6 @@ import { ScrollView } from 'react-native'
 
 
 export default function Menu({ navigation }) {
-  console.log("Menu opened");
   navigation
   return (
     <Background>
