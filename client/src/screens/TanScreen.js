@@ -14,7 +14,6 @@ export default function TanScreen({ navigation }) {
       <View>
         <HoraireTAN />
       </View>
-      <BackButton goBack={navigation.goBack} />
       </Background>
 
   )

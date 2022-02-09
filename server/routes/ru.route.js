@@ -4,7 +4,7 @@ const router = express.Router();
 const RuController = require('../controller/ru');
 
 //Check authentication
-router.use(require('../controller/auth').validatetoken); 
+//Not needed for the ru router.use(require('../controller/auth').validatetoken); 
 
 router.use(function timeLog (req, res, next) {
     console.log('Acessing /ru...')

@@ -52,7 +52,6 @@ class MenuRU extends Component {
         // console.log('render menu ru')
         // console.log(this.state)
         return <View>
-            <Header>Au menu ce midi</Header>
             <RenderHtml
                 contentWidth={100}
                 source={this.state}

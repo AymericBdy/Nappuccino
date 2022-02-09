@@ -77,7 +77,6 @@ class HoraireTAN extends Component {
         };
 
         return <Background>
-        <Header>Horaires station Ecole Centrale </Header>
             <Button mode={this.state.direction === 1 ? "contained" : "outlined"} onPress={dirPontRousseau}>
                 Vers Gare de Pont Rousseau
             </Button>
