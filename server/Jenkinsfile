@@ -1,9 +1,22 @@
 pipeline {
-    agent { label "linux"}
+    agent { label "momo-linux"}
     stages {
+        stage("clean") {
+            steps {
+                sh """
+                    echo "Removing old files..."
+                    rm -r * || exit 0
+                    echo "Stoping old files..."
+                    docker stop nappuccino-app || exit 0 
+                    echo "Clean up done."
+                """
+            }
+        }
         stage("build") {
             steps {
                 sh """
+                    git clone https://github.com/AymericBdy/Nappuccino
+                    cd Nappuccino/server
                     docker build . -t nappuccino
                 """
             }
