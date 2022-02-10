@@ -17,7 +17,7 @@ exports.validatetoken = function(req, res, next) {
             res.status(400).send("You are not in");
         }
     } else {
-        res.status(400).send("Tu n'est pas connecté, pas beau");
+        res.status(400).send("Tu n'es pas connecté, pas beau");
     }
 }
 
