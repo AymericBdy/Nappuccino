@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 var atob = require('atob');
 var Cryptr = require('cryptr'), //Y'en a vraiment besoin ?
+var ldap = require('ldapjs')
 cryptr = new Cryptr('myTotalySecretKey');
 
 exports.validatetoken = function(req, res, next) {
