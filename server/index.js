@@ -31,7 +31,9 @@ app.post('/dame', function (req, res) {
 })
 
 const user = require("./controller/auth.js");
-app.post('/signin', user.signin);
+app.post('/signin', function (req, res) {
+  user.signin(req,res);
+});
 
 app.listen(port, () => {
   console.log(`Nappucinno back-end listening at http://localhost:${port}`)
