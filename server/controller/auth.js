@@ -1,6 +1,6 @@
 var jwt = require('jsonwebtoken');
 var atob = require('atob');
-var Cryptr = require('cryptr'), //Y'en a vraiment besoin ?
+var Cryptr = require('cryptr'); //Y'en a vraiment besoin ?
 var ldap = require('ldapjs');
 cryptr = new Cryptr('myTotalySecretKey');
 
@@ -30,7 +30,7 @@ exports.signin = function(req , res) {
     var encrypted_pass = cryptr.encrypt(dec_pass);
    
     var isGoodAuth = true;
-    
+
     if(isGoodAuth){
         
         var results = {user: "abourdy2020", mail: name}
