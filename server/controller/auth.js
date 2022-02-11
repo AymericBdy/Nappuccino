@@ -1,7 +1,12 @@
 var jwt = require('jsonwebtoken');
 var atob = require('atob');
 var Cryptr = require('cryptr'), //Y'en a vraiment besoin ?
+var ldap = require('ldapjs')
 cryptr = new Cryptr('myTotalySecretKey');
+
+var ecn = ldap.createClient({
+    url: 'ldaps://ldaps.nomade.ec-nantes.fr:636/ou=people,dc=ec-nantes,dc=fr'
+});
 
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
