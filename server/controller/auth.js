@@ -1,12 +1,8 @@
 var jwt = require('jsonwebtoken');
 var atob = require('atob');
 var Cryptr = require('cryptr'), //Y'en a vraiment besoin ?
-var ldap = require('ldapjs')
+var ldap = require('ldapjs');
 cryptr = new Cryptr('myTotalySecretKey');
-
-var ecn = ldap.createClient({
-    url: 'ldaps://ldaps.nomade.ec-nantes.fr:636/ou=people,dc=ec-nantes,dc=fr'
-});
 
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
@@ -31,61 +27,91 @@ exports.signin = function(req , res) {
     var name=req.body.email;
     var pass= req.body.password;
     var dec_pass =atob(pass);
-   var encrypted_pass = cryptr.encrypt(dec_pass);
+    var encrypted_pass = cryptr.encrypt(dec_pass);
    
-   var isGoodAuth = true;
-        if(isGoodAuth){
+    var isGoodAuth = true;
+    
+    if(isGoodAuth){
+        
+        var results = {user: "abourdy2020", mail: name}
+        console.log(results);
+        
+        var data = results;
+        
+        var secret = 'TOPSECRETTTTT'; //TODO UTILISER process.env.JWT_SECRET
+            var now = Math.floor(Date.now() / 1000),
+                iat = (now - 10),
+                expiresIn = 3600,
+                expr = (now + expiresIn),
+                notBefore = (now - 10),
+                jwtId = Math.random().toString(36).substring(7);
+            var payload = {
+                iat: iat,
+                jwtid : jwtId,
+                audience : 'TEST',
+                data : data
+            };	
             
-            var results = {user: "abourdy2020", mail: name}
-            console.log(results);
+        
+        jwt.sign(payload, secret, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
+                
+            if(err){
+                console.log('Error occurred while generating token');
+                console.log(err);
+                return false;
+            }
+            else{
+            if(token != false){
+                //res.send(token);
+                res.header();
+                res.json({
+                        "results":
+                                {"status": "true"},
+                        "token" : token,
+                    "data" : results
+                                    
+                    });
+                res.end();
+            }
+            else{
+                res.send("Could not create token");
+                res.end();
+            }
             
-            var data = results;
-            
-            var secret = 'TOPSECRETTTTT'; //TODO UTILISER process.env.JWT_SECRET
-               var now = Math.floor(Date.now() / 1000),
-                   iat = (now - 10),
-                   expiresIn = 3600,
-                   expr = (now + expiresIn),
-                   notBefore = (now - 10),
-                   jwtId = Math.random().toString(36).substring(7);
-               var payload = {
-                   iat: iat,
-                   jwtid : jwtId,
-                   audience : 'TEST',
-                   data : data
-               };	
-               
-            
-            jwt.sign(payload, secret, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
-                   
-               if(err){
-                   console.log('Error occurred while generating token');
-                   console.log(err);
-                   return false;
-               }
-                else{
-               if(token != false){
-                   //res.send(token);
-                   res.header();
-                   res.json({
-                         "results":
-                                 {"status": "true"},
-                         "token" : token,
-                       "data" : results
-                                       
-                     });
-                   res.end();
-               }
-               else{
-                   res.send("Could not create token");
-                   res.end();
-               }
-               
-                }
-           });
-       
-        }
-        else if(results == ""){
-            req.status(400).send("Invalid user");
-        }
+            }
+        });
+    
+    }
+    else if(results == ""){
+        req.status(400).send("Invalid user");
+    }
 };
+
+function authLdap(ecnUser, ecnPwd) {
+
+    var ecn = ldap.createClient({
+        url: 'ldaps://ldaps.nomade.ec-nantes.fr:636/'
+    });
+    
+    var baseDn = "ou=people,dc=ec-nantes,dc=fr";
+    
+    var connected = false;
+
+    ecn.on('error', (err) => {
+        console.log("[FATAL] Can't connect to ECN LDAP server.");
+    });
+    
+    ecn.bind('uid='+ecnUser+','+baseDn, ecnPwd, (err) => {
+        console.log('[INFO] Connection of user : '+ecnUser+ ' ...');
+        if(err) {
+            console.log("[INFO] Fail.");
+            //console.log(err);
+        } else {
+            connected = true;
+            console.log("[INFO] Success.");
+        }
+        ecn.unbind();
+    });
+
+    return connected;
+}
