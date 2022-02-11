@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.25.0",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
     "body-parser": "^1.19.1",
     "cors": "^2.8.5",
     "cryptr": "^6.0.2",
