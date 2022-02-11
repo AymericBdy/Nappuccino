@@ -23,6 +23,7 @@ exports.validatetoken = function(req, res, next) {
 }
 
 exports.signin = function(req , res) {
+    console.log(req);
     console.log("Body is ",req.body);
     var name=req.body.email;
     var pass= req.body.password;
