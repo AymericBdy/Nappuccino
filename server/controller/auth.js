@@ -82,7 +82,7 @@ exports.signin = function(req , res) {
         });
     
     }
-    else if(results == ""){
+    else {
         req.status(400).send("[ERROR] Invalid user");
     }
 };
