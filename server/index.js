@@ -40,5 +40,5 @@ app.post('/signin', function (req, res) {
 });
 
 app.listen(port, () => {
-  console.log(`Nappucinno back-end listening at http://localhost:${port}`)
+  console.log(`Nappucinno back-end listening at http://valentin.molina.pro:${port}`)
 })

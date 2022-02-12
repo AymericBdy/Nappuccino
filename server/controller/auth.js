@@ -28,7 +28,7 @@ exports.signin = function(req , res) {
 
     var ecnUser=req.body.id;
     var ecnPwd= req.body.password;
-    var dec_pass =atob(pass);
+    var dec_pass =atob(ecnPwd);
     var encrypted_pass = cryptr.encrypt(dec_pass);
    
     // Testing ECN LDAP connection
