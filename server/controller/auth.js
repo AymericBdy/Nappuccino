@@ -1,24 +1,31 @@
 var jwt = require('jsonwebtoken');
 var atob = require('atob');
-var Cryptr = require('cryptr'); //Y'en a vraiment besoin ?
 var ldap = require('ldapjs');
-cryptr = new Cryptr('myTotalySecretKey');
+const jwtSecretKey = 'obrhHyrKo!FDefEHIPk';
 
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
         const token = req.header('Authorization').replace('Bearer ', '')
         const jwt = require('jsonwebtoken')
         try{
-            const payload = jwt.verify(token, 'TOPSECRETTTTT'); //TODO UTILISER DOTENV process.env.JWT_SECRET
+            const payload = jwt.verify(token, jwtSecretKey);
             console.log("You are in");
-            console.log(payload._id);
+            console.log(payload.data);
+            console.log(payload.audience);
             next(); //Continue with the request processing
         } catch(error) {
             //console.error(error.message);
-            res.status(400).send("Invalid authentication token: "+error.message);
+            res.status(400).send({
+                code: 400,
+                message: "Invalid authentication token",
+                error: error
+            });
         }
     } else {
-        res.status(400).send("You are not connected");
+        res.status(400).send({
+            code: 401,
+            message: "Not authenticated",
+        });
     }
 }
 
@@ -28,7 +35,6 @@ exports.signin = function(req , res) {
     var name=req.body.email;
     var pass= req.body.password;
     var dec_pass =atob(pass);
-    var encrypted_pass = cryptr.encrypt(dec_pass);
    
     var isGoodAuth = true;
 
@@ -39,7 +45,6 @@ exports.signin = function(req , res) {
         
         var data = results;
         
-        var secret = 'TOPSECRETTTTT'; //TODO UTILISER process.env.JWT_SECRET
             var now = Math.floor(Date.now() / 1000),
                 iat = (now - 10),
                 expiresIn = 3600,
@@ -54,7 +59,7 @@ exports.signin = function(req , res) {
             };	
             
         
-        jwt.sign(payload, secret, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
+        jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 
             if(err){
                 console.log('Error occurred while generating token');
