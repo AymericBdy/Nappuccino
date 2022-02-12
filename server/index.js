@@ -25,9 +25,13 @@ app.get('/notfound', (req, res) => {
   res.status(404).send("Not found")
 })
 
-app.post('/dame', function (req, res) {
-  console.log("Dame is "+req.body);
-  res.status(200).send('Got a POST request');
+app.get('/authtest', function (req, res) {
+  console.log("Testing authentication");
+  
+  //Check authentication
+  require('./controller/auth').validatetoken(req, res, () => {
+    res.status(200).send('Tested');
+  });
 })
 
 const user = require("./controller/auth.js");

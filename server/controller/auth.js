@@ -12,13 +12,13 @@ exports.validatetoken = function(req, res, next) {
             const payload = jwt.verify(token, 'TOPSECRETTTTT'); //TODO UTILISER DOTENV process.env.JWT_SECRET
             console.log("You are in");
             console.log(payload._id);
-            next();
+            next(); //Continue with the request processing
         } catch(error) {
-            console.error(error.message);
-            res.status(400).send("You are not in");
+            //console.error(error.message);
+            res.status(400).send("Invalid authentication token: "+error.message);
         }
     } else {
-        res.status(400).send("Tu n'es pas connecté, pas beau");
+        res.status(400).send("You are not connected");
     }
 }
 
