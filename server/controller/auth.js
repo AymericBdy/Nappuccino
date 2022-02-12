@@ -30,20 +30,20 @@ exports.validatetoken = function(req, res, next) {
 }
 
 exports.signin = function(req , res) {
-    console.log(req);
-    console.log("Body is ",req.body);
-    var name=req.body.email;
-    var pass= req.body.password;
+    
+    console.log("[INFO] Signin request received. Body is ",req.body);
+
+    var ecnUser=req.body.id;
+    var ecnPwd= req.body.password;
     var dec_pass =atob(pass);
    
-    var isGoodAuth = true;
+    // Testing ECN LDAP connection
+    var isGoodAuth = authLdap(ecnUser, ecnPwd);
 
     if(isGoodAuth){
         
-        var results = {user: "abourdy2020", mail: name}
-        console.log(results);
-        
-        var data = results;
+        var data = {user: ecnUser};
+        console.log("[INFO] Generating token with data : " + data);
         
             var now = Math.floor(Date.now() / 1000),
                 iat = (now - 10),
@@ -62,7 +62,7 @@ exports.signin = function(req , res) {
         jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 
             if(err){
-                console.log('Error occurred while generating token');
+                console.log('[ERROR] Error occurred while generating token');
                 console.log(err);
                 return false;
             }
@@ -74,13 +74,12 @@ exports.signin = function(req , res) {
                         "results":
                                 {"status": "true"},
                         "token" : token,
-                    "data" : results
-                                    
+                        "data" : data
                     });
                 res.end();
             }
             else{
-                res.send("Could not create token");
+                res.send("[ERROR] Could not create token");
                 res.end();
             }
             
@@ -89,7 +88,7 @@ exports.signin = function(req , res) {
     
     }
     else if(results == ""){
-        req.status(400).send("Invalid user");
+        req.status(400).send("[ERROR] Invalid user");
     }
 };
 
@@ -108,7 +107,7 @@ function authLdap(ecnUser, ecnPwd) {
     });
     
     ecn.bind('uid='+ecnUser+','+baseDn, ecnPwd, (err) => {
-        console.log('[INFO] Connection of user : '+ecnUser+ ' ...');
+        console.log('[INFO] Connection of user via ENC LDAP : '+ecnUser+ ' ...');
         if(err) {
             console.log("[INFO] Fail.");
             //console.log(err);
