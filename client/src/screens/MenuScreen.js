@@ -18,10 +18,12 @@ export default function Menu({ navigation }) {
          onPress={() => navigation.replace("Dashboard")}>
           ACCUEIL
         </Button>
-        <Button mode="outlined">
+        <Button mode="outlined"
+         onPress={() => navigation.replace("MapScreen")}>
           PLAN DE L'ECOLE
         </Button>
-        <Button mode="outlined">
+        <Button mode="outlined"
+        onPress={() => navigation.replace("CafetScreen")}>
           INFOS CAFET
         </Button>
         <Button mode="outlined"
@@ -32,7 +34,8 @@ export default function Menu({ navigation }) {
          onPress={() => navigation.replace("TanScreen")}>
           INFOS TAN
         </Button>
-        <Button mode="outlined">
+        <Button mode="outlined"
+        onPress={() => navigation.replace("AnnuaireScreen")}>
           ANNUAIRE DU PERSONNEL
         </Button>
         <Button

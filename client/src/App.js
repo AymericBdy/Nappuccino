@@ -13,6 +13,9 @@ import {
     RuScreen,
     MenuScreen,
 } from './screens'
+import AnnuaireScreen from './screens/AnnuaireScreen'
+import MapScreen from './screens/MapScreen'
+import CafetScreen from './screens/CafetScreen'
 import MenuButton from './components/MenuButton'
 import BackButton from './components/BackButton'
 
@@ -59,7 +62,7 @@ export default function App() {
                     <Stack.Screen name="Dashboard" component={Dashboard}
                     options={{
                         headerLeft: null,
-                        title: 'Dashboard', //Set Header Title
+                        title: 'Navigation', //Set Header Title
                         headerStyle: {
                             backgroundColor: theme.colors.surface, //Set Header color
                         },
@@ -71,6 +74,39 @@ export default function App() {
                     <Stack.Screen name="TanScreen" component={TanScreen} 
                     options={{  
                         title: 'Horaires station ECN', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetScreen" component={CafetScreen} 
+                    options={{  
+                        title: 'Infos Cafet', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="AnnuaireScreen" component={AnnuaireScreen} 
+                    options={{  
+                        title: 'Annuaire', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="MapScreen" component={MapScreen} 
+                    options={{  
+                        title: "Plan de l'école", //Set Header Title
                         headerStyle: {
                             backgroundColor: theme.colors.surface, //Set Header color
                         },
