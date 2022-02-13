@@ -10,22 +10,22 @@ export default function StartScreen({ navigation }) {
   return (
     <Background>
       <LogoCN />
-      <Header>Welcome to Nappuccino</Header>
+      <Header>Bienvenue dans Nappuccino</Header>
       <Paragraph>
-        The app to help your life on campus.
+        L'application pour faciliter votre vie sur le campus.
       </Paragraph>
       <Logo />
       <Button
         mode="contained"
         onPress={() => navigation.navigate('LoginScreen')}
       >
-        Login
+        S'authentifier
       </Button>
       <Button
         mode="outlined"
         onPress={() => navigation.navigate('Dashboard')}
       >
-        Continue without login
+        Continuer sans s'authentifier
       </Button>
     </Background>
   )
