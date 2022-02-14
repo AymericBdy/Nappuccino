@@ -10,11 +10,11 @@ import Header from '../components/Header'
 
 export default function AnnuaireScreen({ navigation }) {
   return (
-      <Background>
+    <Background>
       <View>
         <HoraireTAN />
       </View>
-      </Background>
+    </Background>
 
   )
 }
