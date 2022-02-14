@@ -1,20 +1,13 @@
-import React from 'react'
+import React, { Component } from 'react';
 import Background from '../components/Background'
-import HoraireTAN from '../components/TanSchedule'
-import { View, ScrollView } from 'react-native'
-import BackButton from '../components/BackButton'
-import Button from '../components/Button'
-import Logo from '../components/Logo'
-import Header from '../components/Header'
+import { StyleSheet, Text, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 
 export default function MapScreen({ navigation }) {
   return (
-      <Background>
-      <View>
-      <HoraireTAN />
-      </View>
-      </Background>
+    <WebView source={{ uri: 'https://map-gl-indoor.github.io/' }}
+      style={{ marginTop: 20 }} />
 
   )
 }
