@@ -7,10 +7,12 @@ import Button from '../components/Button'
 import MenuRU from '../components/MenuRU'
 import HoraireTAN from '../components/TanSchedule'
 import { ScrollView } from 'react-native'
+import {AuthContext, useAuth} from '../helpers/Auth';
 
 
-export default function Menu({ navigation }) {
-  navigation
+export default function Menu({ navigation, loggedIn }) {
+  const auth = useAuth();
+  const onLogout = () => auth.logout();
   return (
     <Background>
       <ScrollView>
@@ -40,14 +42,16 @@ export default function Menu({ navigation }) {
         </Button>
         <Button
           mode="outlined"
-          onPress={() =>
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'StartScreen' }],
-            })
-          }
+          onPress={() => {
+            onLogout().then(() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'StartScreen' }],
+              })
+            });
+          }}
         >
-          LOGOUT
+          {loggedIn ? 'DECONNEXION' : 'CONNEXION'}
         </Button>
 
       </ScrollView>

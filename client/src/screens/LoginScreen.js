@@ -10,12 +10,16 @@ import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
+import {AuthContainer, useAuth} from '../helpers/Auth';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
 
-  const onLoginPressed = () => {
+  const auth = useAuth();
+  const onRegister = (navigation) => auth.register(navigation);
+
+  const onLoginPressed = (navigation) => {
     const emailError = emailValidator(email.value)
     const passwordError = passwordValidator(password.value)
     if (emailError || passwordError) {
@@ -23,10 +27,12 @@ export default function LoginScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
       return
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Dashboard' }],
-    })
+  
+    console.log("logging in");
+    onRegister(navigation);
+    /*return <Button mode="contained" onPress={onRegister} >
+      Register
+    </Button>;*/
   }
 
   return (

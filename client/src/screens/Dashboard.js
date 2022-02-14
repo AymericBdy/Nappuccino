@@ -9,7 +9,7 @@ import HoraireTAN from '../components/TanSchedule'
 import { ScrollView } from 'react-native'
 
 
-export default function Dashboard({ navigation }) {
+export default function Dashboard({ navigation, loggedIn }) {
   return (
     <Background>
       <ScrollView>
@@ -26,17 +26,14 @@ export default function Dashboard({ navigation }) {
           Your amazing app starts here. Open you favorite code editor and start
           editing this project.
         </Paragraph>
-        <Button
-          mode="contained"
-          onPress={() =>
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'StartScreen' }],
-            })
-          }
-        >
-          Logout
-        </Button>
+        {loggedIn ? <></> : (
+            <Button
+            mode="contained"
+            onPress={() => navigation.navigate('LoginScreen')}
+            >
+            Se connecter
+            </Button>
+        )}
 
       </ScrollView>
     </Background>

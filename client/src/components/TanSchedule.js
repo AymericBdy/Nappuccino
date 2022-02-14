@@ -75,6 +75,9 @@ class HoraireTAN extends Component {
             this.checkMenu(2);
         };
 
+        console.log(this.props);
+        console.log(this.state);
+
         return <Background>
             <Button mode={this.state.direction === 1 ? "contained" : "outlined"} onPress={dirPontRousseau}>
                 Vers Gare de Pont Rousseau
