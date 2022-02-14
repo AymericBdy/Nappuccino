@@ -13,13 +13,12 @@ export default function Dashboard({ navigation }) {
   return (
     <Background>
       <ScrollView>
-        <Header>Navigation</Header>
         <Button mode="contained"
-         onPress={() => navigation.navigate("RuScreen")}>
+          onPress={() => navigation.navigate("RuScreen")}>
           Menu RU
         </Button>
         <Button mode="contained"
-         onPress={() => navigation.navigate("TanScreen")}>
+          onPress={() => navigation.navigate("TanScreen")}>
           Horaires tan
         </Button>
         <Header>Let’s start</Header>
