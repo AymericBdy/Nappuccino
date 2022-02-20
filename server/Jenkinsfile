@@ -17,6 +17,7 @@ pipeline {
                 sh """
                     git clone https://github.com/AymericBdy/Nappuccino
                     cd Nappuccino/server
+                    mkdir certs || exit 0
                     cp /etc/letsencrypt/live/valentin.molina.pro/fullchain.pem certs/server.cert
                     cp /etc/letsencrypt/live/valentin.molina.pro/privkey.pem certs/server.key
                     git checkout backend
