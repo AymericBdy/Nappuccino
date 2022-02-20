@@ -8,9 +8,9 @@ exports.validatetoken = function(req, res, next) {
         const jwt = require('jsonwebtoken')
         try{
             const payload = jwt.verify(token, jwtSecretKey);
-            console.log("You are in");
+            /*console.log("You are in");
             console.log(payload.data);
-            console.log(payload.audience);
+            console.log(payload.audience);*/
             next(); //Continue with the request processing
         } catch(error) {
             //console.error(error.message);

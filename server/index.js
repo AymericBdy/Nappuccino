@@ -30,7 +30,7 @@ app.get('/authtest', function (req, res) {
   
   //Check authentication
   require('./controller/auth').validatetoken(req, res, () => {
-    res.status(200).send('Auth success');
+    res.status(200).send({code: 200});
   });
 })
 
