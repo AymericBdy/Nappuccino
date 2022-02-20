@@ -17,7 +17,6 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState({ value: '', error: '' })
 
   const auth = useAuth();
-  const onRegister = (navigation) => auth.register(navigation);
 
   const onLoginPressed = (navigation) => {
     const emailError = emailValidator(email.value)
@@ -29,7 +28,7 @@ export default function LoginScreen({ navigation }) {
     }
   
     console.log("logging in");
-    onRegister(navigation);
+    auth.login(email.value, password.value);
     /*return <Button mode="contained" onPress={onRegister} >
       Register
     </Button>;*/

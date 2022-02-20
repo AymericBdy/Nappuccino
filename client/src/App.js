@@ -7,7 +7,6 @@ import { theme } from './core/theme'
 import {
     StartScreen,
     LoginScreen,
-    RegisterScreen,
     Dashboard,
     TanScreen,
     RuScreen,
@@ -90,7 +89,6 @@ export default function App() {
                     }}>
                         {(props) => <Dashboard loggedIn={authenticated} {...props} />}
                     </Stack.Screen>
-                    <Stack.Screen name="RegisterScreen" component={RegisterScreen}/>
                     <Stack.Screen name="CafetScreen" component={CafetScreen} 
                     options={{  
                         title: 'Infos Cafet', //Set Header Title

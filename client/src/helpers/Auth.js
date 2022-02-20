@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useMemo, useReducer} from 'react';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import BackendAdress from '../helpers/Backend';
 
 export const AuthContext = React.createContext('auth');
 
@@ -8,20 +9,21 @@ const LOGGED_OUT = 'LOGGED_OUT';
 const ACCESS_TOKEN_KEY = 'access_token';
 
 // Create a wrapper function for communicating with the API
-const registerUser = () =>
-  fetch('https://run.mocky.io/v3/dd598227-c275-48e8-9840-c588293ead84', {
+const loginUser = (id, password) =>
+  fetch(BackendAdress()+'signin', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      userName: 'jonaskuiler',
+      id: id,
+      password: password,
     }),
   }).then(response => response.json());
 
-const currentUser = token =>
-  fetch('https://run.mocky.io/v3/5910a865-8ebf-4fab-b27f-70f96551c5d4', {
+const refreshToken = token =>
+  fetch(BackendAdress()+"authtest", {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -61,26 +63,23 @@ export const AuthContainer = (props, navigation) => {
   // Memoize this facade since it shouldn't be recreated every render
   const facade = useMemo(
     () => ({
-      register: async (navigation) => {
+      login: async (id, password) => {
         try {
-          const result = await registerUser();
+          console.log("Log on "+BackendAdress()+'signin');
+          const result = await loginUser(id, password);
 
           console.log(`result`, result);
 
-          await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, result.access_token);
+          await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, result.token);
 
           dispatch({type: AUTHENTICATED});
-          
-            /*navigation.reset({
-                index: 0,
-                routes: [{ name: 'Dashboard' }],
-            })*/
+      
         } catch (error) {
           console.error(error);
         }
       },
 
-      logout: async (navigation) => {
+      logout: async () => {
         console.log("Logging out from here");
         EncryptedStorage.setItem(ACCESS_TOKEN_KEY, null);
         dispatch({type: LOGGED_OUT});
@@ -101,7 +100,7 @@ export const AuthContainer = (props, navigation) => {
             return;
           }
 
-          await currentUser(token);
+          await refreshToken(token);
 
           dispatch({type: AUTHENTICATED});
         } catch (error) {
