@@ -8,7 +8,13 @@ const AUTHENTICATED = 'AUTHENTICATED';
 const LOGGED_OUT = 'LOGGED_OUT';
 const ACCESS_TOKEN_KEY = 'access_token';
 
-// Create a wrapper function for communicating with the API
+/**
+ * Se connecte au backend et vérifie si ces identifiants sont valides
+ * 
+ * @param {string} id Identifiant ECN
+ * @param {string} password Mot de passe ECN
+ * @returns Le résultat de la requète de connexion
+ */
 const loginUser = (id, password) =>
   fetch(BackendAdress()+'signin', {
     method: 'POST',
@@ -22,6 +28,11 @@ const loginUser = (id, password) =>
     }),
   }).then(response => response.json());
 
+/**
+ * Se connecte au backend et vérifie si le token est valide
+ * @param {*} token Token jwt de connexion
+ * @returns Le résultat de la requète de validation du token
+ */
 const refreshToken = token =>
   fetch(BackendAdress()+"authtest", {
     method: 'GET',
@@ -32,8 +43,11 @@ const refreshToken = token =>
     },
   }).then(result => result.json());
 
-// The app container, should handle the state of a user being authenticated or not
-export const AuthContainer = (props, navigation) => {
+/**
+ * Component qui gère l'état authentifié ou non de l'utilisateur
+ */
+export const AuthContainer = (props) => {
+  //Permet de changer le state du composant en fonction de si on est connecté ou non
   const [authState, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
@@ -54,28 +68,40 @@ export const AuthContainer = (props, navigation) => {
           throw new Error(`${action.type} is not a valid action type`);
       }
     },
-    {
+    { //Etat initial
       authenticated: false,
       initialized: false,
     },
   );
 
   // Memoize this facade since it shouldn't be recreated every render
+  // Contient les fonctions pour se connecter/se déconnecter
   const facade = useMemo(
     () => ({
       login: async (id, password) => {
         try {
           console.log("Log on "+BackendAdress()+'signin');
+          //Connexion au ldap et vérification des identifiants
           const result = await loginUser(id, password);
 
           console.log(`result`, result);
+          
+          //Si ça a marché
+          if(result.authenticated) {
+            //On sauvegarde le token
+            await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, result.token);
+  
+            //Et on affiche l'application en tant qu'utilisateur connecté
+            dispatch({type: AUTHENTICATED});
 
-          await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, result.token);
-
-          dispatch({type: AUTHENTICATED});
+            return ""; //Indique à l'écran de connexion que l'authentification a fonctionné
+          } else {
+            return result.message; //Affiche le message d'erreur sur l'écran de connexion
+          }
       
         } catch (error) {
           console.error(error);
+          return "Erreur : "+error; //Affiche le message d'erreur sur l'écran de connexion
         }
       },
 

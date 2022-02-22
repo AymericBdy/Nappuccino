@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Component} from 'react'
 import { TouchableOpacity, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
@@ -12,83 +12,115 @@ import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import {AuthContainer, useAuth} from '../helpers/Auth';
 
-export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: '', error: '' })
-  const [password, setPassword] = useState({ value: '', error: '' })
-
+/**
+ * @returns L'écran de connexion au ldap de Centrale Nantes
+ */
+export default function LoginScreen(props) {
   const auth = useAuth();
 
-  const onLoginPressed = (navigation) => {
-    const emailError = emailValidator(email.value)
-    const passwordError = passwordValidator(password.value)
-    if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError })
-      setPassword({ ...password, error: passwordError })
-      return
-    }
-  
-    console.log("logging in");
-    auth.login(email.value, password.value);
-    /*return <Button mode="contained" onPress={onRegister} >
-      Register
-    </Button>;*/
-  }
-
-  return (
-    <Background>
-      <Logo />
-      <Header>Entrez votre authentification.</Header>
-      <TextInput
-        label="Email"
-        returnKeyType="next"
-        value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
-        autoCapitalize="none"
-        autoCompleteType="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
-      />
-      <TextInput
-        label="Mot de passe"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
-      <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ResetPasswordScreen')}
-        >
-          <Text style={styles.forgot}>Mot de passe oublié?</Text>
-        </TouchableOpacity>
-      </View>
-      <Button mode="contained" onPress={onLoginPressed}>
-        S'authentifier
-      </Button>
-    </Background>
-  )
+  return <LoginScreenClass {...props} auth={auth} />;
 }
 
-const styles = StyleSheet.create({
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
-  },
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
-  forgot: {
-    fontSize: 13,
-    color: theme.colors.secondary,
-  },
-  link: {
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-  },
-})
+/**
+ * Ecran de connexion au ldap de Centrale Nantes
+ */
+class LoginScreenClass extends Component {
+  state = {
+    user: "",
+    userError: "",
+    password: "",
+    passwordError: "",
+    buttonText: "S'authentifier",
+    buttonEnabled: true,
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      ...this.state,
+      navigation: props.navigation,
+    };
+  }
+
+  loginPressed(auth) {
+    //On réinisialise les erreurs et on indique que ça charge
+    this.setState({
+      ...this.state,
+      userError: "",
+      passwordError: "",
+      buttonText: "Chargement",
+      buttonEnabled: false,
+    });
+
+    const emailError = emailValidator(this.state.user); //TODO revoir ça
+    const passwordError = passwordValidator(this.state.password); 
+    //Si il y a des problèmes dans les champs d'entrée, on affiche les erreurs
+    if (emailError || passwordError) {
+      this.setState({
+        ...this.state,
+        userError: emailError,
+        passwordError: passwordError,
+        buttonText: "S'authentifier",
+        buttonEnabled: true,
+      });
+      return;
+    }
+  
+    //On se login sur le ldap
+    auth.login(this.state.user, this.state.password).then(result => {
+      //console.log("Got authentication result "+result);
+  
+      //Si result est vide, l'authentification a marché, sinon on affiche le message d'erreur
+      this.setState({
+          ...this.state,
+          userError: result,
+          passwordError: result ? " " : "",
+          buttonText: "S'authentifier",
+          buttonEnabled: !result,
+        });
+    });
+  }
+
+  render() {
+    const buttonPressed = () => this.loginPressed(this.props.auth);
+    return (
+      <Background>
+        <Logo />
+        <Header>Entrez vos identifiants</Header>
+        <TextInput
+          label="Identifiant centrale"
+          returnKeyType="next"
+          value={this.state.user}
+          onChangeText={(text) => 
+            this.setState({
+              ...this.state,
+              user: text,
+            })}
+          error={!!this.state.userError}
+          errorText={this.state.userError}
+          autoCapitalize="none"
+          autoCompleteType="username"
+          textContentType="username"
+          keyboardType="default"
+        />
+        <TextInput
+          label="Mot de passe"
+          returnKeyType="done"
+          value={this.state.password}
+          onChangeText={(text) => 
+            this.setState({
+              ...this.state,
+              password: text,
+            })}
+          error={!!this.state.passwordError}
+          errorText={this.state.passwordError}
+          secureTextEntry
+        />
+        <Button mode="contained" onPress={buttonPressed} enabled={this.state.buttonEnabled}>
+          {this.state.buttonText}
+        </Button>
+      </Background>
+    )
+  }
+}
