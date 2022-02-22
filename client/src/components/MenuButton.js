@@ -8,7 +8,7 @@ import {View, Text, Image, TouchableOpacity} from 'react-native';
 
 const MenuButton = (props) => {
   return (
-    <View>
+    <View style={{marginLeft: 12,}}>
         <TouchableOpacity onPress={() => {
         return props.route.name === 'MenuScreen' ? props.navigation.goBack() :
         props.navigation.navigate("MenuScreen");}}>

@@ -35,23 +35,23 @@ export default function App() {
                     screenOptions={({route, navigation}) => ({
                         headerShown: true,
                         headerLeft: () => (
-                            <BackButton
+                            /*<BackButton
                             goBack={() => navigation.pop(1)}
-                            />
-                          ),
-                        headerRight: () => (
+                            />*/
                             <MenuButton
-                              //Menu Text
-                              menutext="Menu"
-                              //Menu View Style
-                              menustyle={{marginRight: 16}}
-                              //Menu Text Style
-                              textStyle={{color: theme.colors.primary}}
-                              navigation={navigation}
-                              route={route}
-                              isIcon={true}
+                                //Menu Text
+                                menutext="Menu"
+                                //Menu View Style
+                                menustyle={{marginRight: 16}}
+                                //Menu Text Style
+                                textStyle={{color: theme.colors.primary}}
+                                navigation={navigation}
+                                route={route}
+                                isIcon={true}
                             />
                           ),
+                        /*headerRight: () => (
+                          ),*/
                     })}
                 >
                     {initialized ? (
@@ -77,8 +77,8 @@ export default function App() {
                     )}
                     <Stack.Screen name="Dashboard"
                     options={{
-                        headerLeft: null,
-                        title: authenticated ? 'Navigation oth' : 'Navigation not', //Set Header Title
+                        //headerLeft: null,
+                        title: 'Navigation', //Set Header Title
                         headerStyle: {
                             backgroundColor: theme.colors.surface, //Set Header color
                         },
@@ -146,8 +146,7 @@ export default function App() {
                     }}/>
                     <Stack.Screen name="MenuScreen"
                     options={{
-                        headerLeft: null,
-                        headerBackTitleVisible: false,
+                        //headerLeft: null,
                         title: '',
                     }}>
                     {(props) => <MenuScreen loggedIn={authenticated} {...props} />}
