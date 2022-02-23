@@ -1,45 +1,45 @@
 var jwt = require('jsonwebtoken');
-var atob = require('atob');
-var Cryptr = require('cryptr'); //Y'en a vraiment besoin ?
 var ldap = require('ldapjs');
-cryptr = new Cryptr('myTotalySecretKey');
+const jwtSecretKey = 'obrhHyrKo!FDefEHIPk';
 
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
         const token = req.header('Authorization').replace('Bearer ', '')
         const jwt = require('jsonwebtoken')
         try{
-            const payload = jwt.verify(token, 'TOPSECRETTTTT'); //TODO UTILISER DOTENV process.env.JWT_SECRET
-            console.log("You are in");
-            console.log(payload._id);
-            next();
+            const payload = jwt.verify(token, jwtSecretKey);
+            /*console.log("You are in");
+            console.log(payload.data);
+            console.log(payload.audience);*/
+            next(); //Continue with the request processing
         } catch(error) {
-            console.error(error.message);
-            res.status(400).send("You are not in");
+            //console.error(error.message);
+            res.status(400).send({
+                code: 400,
+                message: "Invalid authentication token",
+                error: error
+            });
         }
     } else {
-        res.status(400).send("Tu n'es pas connecté, pas beau");
+        res.status(400).send({
+            code: 401,
+            message: "Not authenticated",
+        });
     }
 }
 
 exports.signin = function(req , res) {
-    console.log(req);
-    console.log("Body is ",req.body);
-    var name=req.body.email;
-    var pass= req.body.password;
-    var dec_pass =atob(pass);
-    var encrypted_pass = cryptr.encrypt(dec_pass);
+    
+    var ecnUser = req.body.id;
+    console.log("[INFO] Signin request received. User is ",ecnUser);
+    var ecnPwd = req.body.password;
    
-    var isGoodAuth = true;
-
-    if(isGoodAuth){
-        
-        var results = {user: "abourdy2020", mail: name}
-        console.log(results);
-        
-        var data = results;
-        
-        var secret = 'TOPSECRETTTTT'; //TODO UTILISER process.env.JWT_SECRET
+    // Testing ECN LDAP connection
+    authLdap(ecnUser, ecnPwd, (validCredentials) => {
+        if(validCredentials){
+            var data = {user: ecnUser};
+            console.log("[INFO] Generating token with data : " + data);
+            
             var now = Math.floor(Date.now() / 1000),
                 iat = (now - 10),
                 expiresIn = 3600,
@@ -52,43 +52,49 @@ exports.signin = function(req , res) {
                 audience : 'TEST',
                 data : data
             };	
-            
-        
-        jwt.sign(payload, secret, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 
-            if(err){
-                console.log('Error occurred while generating token');
-                console.log(err);
-                return false;
-            }
-            else{
-            if(token != false){
-                //res.send(token);
+            jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 res.header();
-                res.json({
-                        "results":
-                                {"status": "true"},
-                        "token" : token,
-                    "data" : results
-                                    
+                if(err){
+                    console.log('[ERROR] An error occurred while generating token');
+                    console.log(err);
+                    res.status(500);
+                    res.json({
+                        authenticated: false,
+                        message: "[ERROR] An error occurred while generating token",
+                        error: err
                     });
+                }
+                else{
+                    if(token != false){
+                        res.status(200);
+                        res.json({
+                            authenticated: true,
+                            token: token,
+                            data: data
+                        });
+                    }
+                    else{
+                        res.status(500);
+                        res.json({
+                            authenticated: false,
+                            message: "[ERROR] Could not create token"
+                        });
+                    }
+                }
                 res.end();
-            }
-            else{
-                res.send("Could not create token");
-                res.end();
-            }
-            
-            }
-        });
-    
-    }
-    else if(results == ""){
-        req.status(400).send("Invalid user");
-    }
+            });
+        }
+        else {
+            res.status(401).send({
+                authenticated: false,
+                message: "[ERROR] Invalid credentials"
+            });
+        }
+    });
 };
 
-function authLdap(ecnUser, ecnPwd) {
+async function authLdap(ecnUser, ecnPwd, callback) {
 
     var ecn = ldap.createClient({
         url: 'ldaps://ldaps.nomade.ec-nantes.fr:636/'
@@ -103,7 +109,7 @@ function authLdap(ecnUser, ecnPwd) {
     });
     
     ecn.bind('uid='+ecnUser+','+baseDn, ecnPwd, (err) => {
-        console.log('[INFO] Connection of user : '+ecnUser+ ' ...');
+        console.log('[INFO] Connection of user via ENC LDAP : '+ecnUser+ ' ...');
         if(err) {
             console.log("[INFO] Fail.");
             //console.log(err);
@@ -112,7 +118,6 @@ function authLdap(ecnUser, ecnPwd) {
             console.log("[INFO] Success.");
         }
         ecn.unbind();
+        callback(connected);
     });
-
-    return connected;
 }

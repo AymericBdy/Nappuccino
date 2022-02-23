@@ -1,6 +1,8 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const bodyParser = require('body-parser');
+const https = require("https");
+const fs = require("fs");
 
 //const cors = require('cors');
 
@@ -25,16 +27,27 @@ app.get('/notfound', (req, res) => {
   res.status(404).send("Not found")
 })
 
-app.post('/dame', function (req, res) {
-  console.log("Dame is "+req.body);
-  res.status(200).send('Got a POST request');
+app.get('/authtest', function (req, res) {
+  console.log("Testing authentication");
+  
+  //Check authentication
+  require('./controller/auth').validatetoken(req, res, () => {
+    res.status(200).send({code: 200});
+  });
 })
 
 const user = require("./controller/auth.js");
+const { fstat } = require('fs');
 app.post('/signin', function (req, res) {
   user.signin(req,res);
 });
 
-app.listen(port, () => {
-  console.log(`Nappucinno back-end listening at http://localhost:${port}`)
-})
+https.createServer(
+  {
+    key: fs.readFileSync("certs/server.key"),
+    cert: fs.readFileSync("certs/server.cert")
+  },
+  app
+).listen(port, () => {
+  console.log(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
+});
