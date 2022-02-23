@@ -1,5 +1,6 @@
 const { Pool, Client } = require('pg')
 const fs = require('fs')
+const access = require('./dbAccess.js')
 
 
 // Connect to database
@@ -9,13 +10,18 @@ const logInfo = JSON.parse(data);
 const pool = new Pool(logInfo)
 
 
+const query = {
+  text: 'INSERT INTO users(report_count, status) VALUES($1, $2)',
+  values: ['0', 'admin'],
+}
 
-const text = 'INSERT INTO users(report_count, status) VALUES($1, $2)'
-const values = ['0', 'admin']
+
+
+
 
 
 // callback
-pool.query(text, values, (err, res) => {
+pool.query(query, (err, res) => {
     if (err) {
       console.log(err.stack)
     } else {
