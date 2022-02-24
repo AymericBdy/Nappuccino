@@ -6,7 +6,7 @@ exports.timetable = async (req, res) => {
     //Tan api : get ecn station time table
     const direction = req.params.direction;
     console.log("Direction: "+direction);
-    const url = "https://open.tan.fr/ewp/horairesarret.json/ECSU1/2/"+direction;
+    const url = "https://open.tan.fr/ewp/horairesarret.json/ECSU"+direction+"/2/"+direction;
 
     const getData = async (url) => {
         try {
