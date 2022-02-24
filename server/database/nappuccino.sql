@@ -80,7 +80,6 @@ CREATE TABLE public.report_ru (
                 date TIMESTAMP NOT NULL,
                 report_type VARCHAR NOT NULL,
                 comment VARCHAR,
-                user_id INTEGER NOT NULL,
                 validation_count INTEGER NOT NULL,
                 login_ecn VARCHAR NOT NULL,
                 CONSTRAINT report_ru_id PRIMARY KEY (report_ru_id)
