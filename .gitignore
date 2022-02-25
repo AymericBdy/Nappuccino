@@ -68,3 +68,6 @@ buck-out/
 
 # postgres_data :
 /server/postgres_data/*
+
+# ssl certificates :
+/server/certs/*
