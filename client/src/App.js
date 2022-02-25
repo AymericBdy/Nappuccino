@@ -14,7 +14,9 @@ import {
     SplashScreen,
     AnnuaireScreen,
     MapScreen,
-    CafetScreen,
+    CafetHome,
+    CafetNewReport,
+    CafetViewReports,
 } from './screens'
 import MenuButton from './components/MenuButton'
 import BackButton from './components/BackButton'
@@ -89,9 +91,31 @@ export default function App() {
                     }}>
                         {(props) => <Dashboard loggedIn={authenticated} {...props} />}
                     </Stack.Screen>
-                    <Stack.Screen name="CafetScreen" component={CafetScreen} 
+                    <Stack.Screen name="CafetScreen" component={CafetHome} 
                     options={{  
                         title: 'Infos Cafet', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetNewReport" component={CafetNewReport} 
+                    options={{  
+                        title: 'Nouveau signalement', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetViewReports" component={CafetViewReports} 
+                    options={{  
+                        title: 'Infos machine', //Set Header Title
                         headerStyle: {
                             backgroundColor: theme.colors.surface, //Set Header color
                         },
