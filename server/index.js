@@ -22,6 +22,8 @@ app.use('/ru', require('./routes/ru.route'));
 
 app.use('/tan', require('./routes/tan.route'));
 
+app.use('/cafet', require('./routes/cafet.route'));
+
 //Examples :
 app.get('/notfound', (req, res) => {
   res.status(404).send("Not found")
@@ -42,7 +44,7 @@ app.post('/signin', function (req, res) {
   user.signin(req,res);
 });
 
-https.createServer(
+/*https.createServer(
   {
     key: fs.readFileSync("certs/server.key"),
     cert: fs.readFileSync("certs/server.cert")
@@ -51,3 +53,8 @@ https.createServer(
 ).listen(port, () => {
   console.log(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
 });
+*/
+
+app.listen(port, () => {
+  console.log(`Nappucinno back-end listening at http://valentin.molina.pro:${port}`)
+})

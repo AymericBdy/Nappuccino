@@ -41,6 +41,17 @@ function testAndAddEcnUser(userEcn){
   });
 }
 
+async function getCafetMachines() {
+  const rows = await query('SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;');
+  console.log(rows);
+  return rows;
+}
+
+async function getCafetMachineInfos(machineId) {
+  //wips
+}
+
 module.exports = {
-  testAndAddEcnUser
+  testAndAddEcnUser,
+  getCafetMachines
 }
