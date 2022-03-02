@@ -1,6 +1,7 @@
 const { Pool, Client } = require('pg')
 const fs = require('fs')
 
+// Note Valentin : Est-ce utile ?
 
 function addUser(){
     const query = {
@@ -10,7 +11,7 @@ function addUser(){
     return query
 }
   
-function addEcnUser(user_id, login_ecn){
+exports.addEcnUser = function addEcnUser(user_id, login_ecn){
     const query = {
       text: 'INSERT INTO user_ecn(login_ecn, user_id) VALUES($1, $2)',
       values: [login_ecn, user_id],

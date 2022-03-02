@@ -1,33 +1,46 @@
-const { Pool, Client } = require('pg')
-const fs = require('fs')
-const access = require('./dbAccess.js')
-
+const { Pool, Client } = require('pg');
+const fs = require('fs');
 
 // Connect to database
-const data = fs.readFileSync('../properties/bdd.json', 'utf8');
+const data = fs.readFileSync('properties/bdd.json', 'utf8');
 // parse JSON string to JSON object
 const logInfo = JSON.parse(data);
-const pool = new Pool(logInfo)
+const pool = new Pool(logInfo);
 
+async function query(query, params) {
+  const {rows, fields} = await pool.query(query, params);
 
-const query = {
-  text: 'INSERT INTO users(report_count, status) VALUES($1, $2)',
-  values: ['0', 'admin'],
+  return rows;
 }
 
+async function addEcnUser(userEcn) {
 
+  const rows = await query('INSERT INTO users(login_ecn, report_count, status) VALUES($1, $2, $3)',
+    [userEcn, 0, 'user']
+  );
 
+  //to do : gestion des exeptions.
+}
 
+async function doesEcnUserExist(userEcn) {
 
+  console.log(`[INFO] Testing if user ${userEcn} exists in the database.`);
+  const rows = await query('SELECT login_ecn FROM users WHERE login_ecn = $1', [userEcn]);
+  return Object.keys(rows).length !== 0;
 
-// callback
-pool.query(query, (err, res) => {
-    if (err) {
-      console.log(err.stack)
+}
+
+function testAndAddEcnUser(userEcn){
+  doesEcnUserExist(userEcn).then(exist => {
+    if(!exist) {
+      addEcnUser(userEcn);
+      console.log(`[INFO] Adding user ${userEcn}.`);
     } else {
-      console.log(res.rows[0])
-      // { name: 'brianc', email: 'brian.m.carlson@gmail.com' }
+      console.log(`[INFO] User ${userEcn} already exists.`);
     }
-  })
+  });
+}
 
-pool.end()
+module.exports = {
+  testAndAddEcnUser
+}

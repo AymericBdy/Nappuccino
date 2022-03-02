@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 var ldap = require('ldapjs');
 const jwtSecretKey = 'obrhHyrKo!FDefEHIPk';
+const bdd = require('../model/bdd');
 
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
@@ -40,6 +41,8 @@ exports.signin = function(req , res) {
             var data = {user: ecnUser};
             console.log("[INFO] Generating token with data : " + data);
             
+            bdd.testAndAddEcnUser(ecnUser);
+
             var now = Math.floor(Date.now() / 1000),
                 iat = (now - 10),
                 expiresIn = 3600,
