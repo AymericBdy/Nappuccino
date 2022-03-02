@@ -20,17 +20,24 @@ export default function FloatingButton({ mode, style, ...props }) {
 
 const styles = StyleSheet.create({
   button: {
-    width: 20,
-    marginVertical: 10,
-    paddingVertical: 2,
-    position: 'absolute',
-    right: 10,
-    bottom: 10,
-    borderRadius: 5,
+    width: 40,
+    height: 40,
+    textAlign: "center",
+    borderRadius: 100,
+    margin: 0,
+    padding: 0,
+    paddingStart: 0,
+    marginStart: 0,
   },
   text: {
+    width: 40,
+    height: 40,
     fontWeight: 'bold',
     fontSize: 15,
-    lineHeight: 26,
+    textAlign: "center",
+    margin: 0,
+    padding: 0,
+    paddingStart: 0,
+    marginStart: 0,
   },
 })

@@ -16,7 +16,7 @@ class HoraireTAN extends Component {
         direction: 1,
     }
 
-    checkMenu(direction) {
+    checkTanSchedule(direction) {
         var searchUrl = BackendAdress()+"tan/ecn/"+direction;
         //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
         //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
@@ -42,7 +42,6 @@ class HoraireTAN extends Component {
 
 
     render() {
-        const thisData = this.state.html;
         const styles = StyleSheet.create({
             text: {
                 fontSize: 20,
@@ -64,7 +63,7 @@ class HoraireTAN extends Component {
                 prochainPassage2: [""],
                 direction: 1
             });
-            this.checkMenu(1);
+            this.checkTanSchedule(1);
         };
         const dirOrvault = () => {
             this.setState({
@@ -72,7 +71,7 @@ class HoraireTAN extends Component {
                 prochainPassage2: [""],
                 direction: 2
             });
-            this.checkMenu(2);
+            this.checkTanSchedule(2);
         };
 
         console.log(this.props);
@@ -93,7 +92,7 @@ class HoraireTAN extends Component {
     }
 
     componentDidMount() {
-        this.checkMenu(1);
+        this.checkTanSchedule(1);
     }
 }
 export default HoraireTAN;

@@ -3,6 +3,7 @@ import Background from '../../components/Background'
 import { Image, View, ScrollView, Text, TouchableOpacity, } from 'react-native'
 import { FAB } from 'react-native-paper'
 import BackButton from '../../components/BackButton'
+import CafetMachineInfos from '../../components/CafetMachineInfos'
 import Button from '../../components/Button'
 import Logo from '../../components/Logo'
 import Header from '../../components/Header'
@@ -17,14 +18,7 @@ export default function CafetViewReports({ navigation }) {
         margin: 10
       }}>
         <ScrollView>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
-          <Text style={{fontSize: 50}}>Cafet infos d'une machine</Text>
+          <CafetMachineInfos machine_id="2"></CafetMachineInfos>
         </ScrollView>
 
         <FAB
