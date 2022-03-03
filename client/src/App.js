@@ -15,7 +15,8 @@ import {
     AnnuaireScreen,
     MapScreen,
     CafetHome,
-    CafetNewReport,
+    CafetNewReportMachCaf,
+    CafetNewReportDistrib,
     CafetViewReports,
 } from './screens'
 import MenuButton from './components/MenuButton'
@@ -91,7 +92,7 @@ export default function App() {
                     }}>
                         {(props) => <Dashboard loggedIn={authenticated} {...props} />}
                     </Stack.Screen>
-                    <Stack.Screen name="CafetScreen" component={CafetHome} 
+                    <Stack.Screen name="CafetHome" component={CafetHome} 
                     options={{  
                         title: 'Infos Cafet', //Set Header Title
                         headerStyle: {
@@ -102,7 +103,18 @@ export default function App() {
                             fontWeight: 'bold', //Set Header text style
                         },
                     }}/>
-                    <Stack.Screen name="CafetNewReport" component={CafetNewReport} 
+                    <Stack.Screen name="CafetNewReportMachCaf" component={CafetNewReportMachCaf} 
+                    options={{  
+                        title: 'Nouveau signalement', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetNewReportDistrib" component={CafetNewReportDistrib} 
                     options={{  
                         title: 'Nouveau signalement', //Set Header Title
                         headerStyle: {
