@@ -42,6 +42,79 @@ function testAndAddEcnUser(userEcn){
   });
 }
 
+
+
+
+async function addDispenserReport(date, report_type, comment, dispenser_id, login_ecn){
+    const rows = await query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, dispenser_id, login_ecn)'+
+        'VALUES($1,$2,$3,$4,$5,$6);'+
+        'UPDATE users SET report_count = report_count + 1 WHERE login_ecn = $6',
+        [date, report_type, comment, 0, dispenser_id, login_ecn]
+    );
+    return rows
+}
+
+// TO DO
+async function addRuReport(date, report_type, comment, dispenser_id, login_ecn){
+  const rows = await query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, login_ecn)'+
+      'VALUES($1,$2,$3,$4,$5,$6);'+
+      'UPDATE users SET report_count = report_count + 1 WHERE user_id = $6',
+      [date, report_type, comment, 0, dispenser_id, login_ecn]
+  );
+  return rows
+}
+
+
+async function addDispenser(dispenser_type){
+  const rows = await query('INSERT INTO dispenser(dispenser_type, dispenser_status) VALUES($1,$2)',
+      [dispenser_type, 'fonctionnel']
+  );
+  return rows
+}
+
+async function addIssue(message,login_ecn){
+  const rows = await query('INSERT INTO issues(message, login_ecn) VALUES($1,$2)',
+      [message,login_ecn]
+  );
+  return rows
+}
+
+async function upvoteRU(report_id){
+  const rows = await query('UPDATE report_ru SET validation_count = validation_count + 1 WHERE report_ru_id = $1',
+      [report_id]
+  );
+  return rows
+}
+
+async function upvoteDispenser(report_id){
+  const rows = await query('UPDATE report_dispenser SET validation_count = validation_count + 1 WHERE report_dispenser_id = $1',
+     [report_id]
+  );
+  return rows
+}
+
+async function downvoteRU(report_id){
+  const rows = await query('UPDATE report_ru SET validation_count = validation_count - 1 WHERE report_ru_id = $1',
+      [report_id]
+  );
+  return rows
+}
+
+async function downvoteDispenser(report_id){
+  const rows = await query('UPDATE report_dispenser SET validation_count = validation_count - 1 WHERE report_dispenser_id = $1',
+      [report_id]
+  );
+  return rows
+}
+
+
+async function updateDispenserStatus(status,dispenser_id){
+  const rows = await query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
+      [status, dispenser_id]
+  );
+  return rows
+}
+
 module.exports = {
   testAndAddEcnUser
 }
