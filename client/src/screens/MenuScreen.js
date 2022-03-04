@@ -25,7 +25,7 @@ export default function Menu({ navigation, loggedIn }) {
           PLAN DE L'ECOLE
         </Button>
         <Button mode="outlined"
-        onPress={() => navigation.replace("CafetScreen")}>
+        onPress={() => navigation.replace("CafetHome")}>
           INFOS CAFET
         </Button>
         <Button mode="outlined"

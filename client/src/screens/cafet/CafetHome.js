@@ -12,7 +12,7 @@ export default function CafetHome({ navigation }) {
       <View>
         <Text>Cafet home</Text>
         <Button mode="contained"
-          onPress={() => navigation.navigate("CafetNewReport")}>
+          onPress={() => navigation.navigate("CafetNewReportMachCaf")}>
           Cafet signalement
         </Button>
         <Button mode="contained"
