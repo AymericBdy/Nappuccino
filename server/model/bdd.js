@@ -16,7 +16,7 @@ async function query(query, params) {
 
 async function addEcnUser(userEcn) {
 
-  const rows = await query('INSERT INTO users(login_ecn, report_count, status) VALUES($1, $2, $3)',
+  const rows = await query('INSERT INTO users(login_ecn, report_count, priviledge) VALUES($1, $2, $3)',
     [userEcn, 0, 'user']
   );
 
