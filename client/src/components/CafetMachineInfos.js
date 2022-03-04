@@ -24,6 +24,7 @@ class CafetMachineInfos extends Component {
         this.state = {
           ...this.state,
           id: props.machine_id,
+          type_machine: props.type_machine,
         };
     }
 
@@ -32,7 +33,7 @@ class CafetMachineInfos extends Component {
         this.setState(
             {
                 ...this.state,
-                name: 'Machine à café sas',
+                name: this.state.type_machine == 'cafe' ? 'Machine à café sas' : 'Distributeur sas',
                 reports: [{
                     type: 3,
                     name: "Plus de gobelets",

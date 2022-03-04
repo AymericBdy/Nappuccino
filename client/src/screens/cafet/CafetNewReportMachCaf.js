@@ -34,7 +34,7 @@ export default function CafetNewReportMachCaf({ navigation }) {
     })}
       </Picker>
       <Button mode="contained"
-          onPress={() => navigation.navigate("CafetHome")}>
+          onPress={() => navigation.goBack()}>
           Valider
         </Button>
       </View>

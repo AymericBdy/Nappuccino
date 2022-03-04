@@ -12,7 +12,7 @@ import { theme } from '../../core/theme'
 
 export default function CafetNewReportDistrib({ navigation }) {
     const [pb, setPb] = useState('Unknown')
-    var items=["Paiement sans contact impossible", "Plus de gobelets", "Plus de sucre", "Expresso", "Expresso allongé", 
+    var items=["Paiement sans contact impossible", "C'est pas du café cette machine :)", "Plus de sucre", "Expresso", "Expresso allongé", 
     "Expresso crème", "Expresso crème allongé", "Ristretto", "Café soluble décaféiné", "Café soluble au lait", 
     "Cappuccino", "Cappuccino noisette", "Cappuccino à la française", "Latte", "Boisson au cacao", "Viennois au cacao",
     "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"]
@@ -32,7 +32,7 @@ export default function CafetNewReportDistrib({ navigation }) {
     })}
       </Picker>
       <Button mode="contained"
-          onPress={() => navigation.navigate("CafetHome")}>
+          onPress={() => navigation.goBack()}>
           Valider
         </Button>
       </View>
