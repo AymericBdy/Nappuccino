@@ -9,6 +9,7 @@ import Button from './Button'
 import FloatingButton from './FloatingButton'
 import { theme } from '../core/theme'
 import BackendAdress from '../helpers/Backend';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 class CafetMachineInfos extends Component {
     state = {
@@ -52,8 +53,6 @@ class CafetMachineInfos extends Component {
     render() {
         const styles = StyleSheet.create({
             text: {
-                fontSize: 20,
-                lineHeight: 25,
                 textAlign: 'center',
                 marginBottom: 12,
                 padding: 20,
@@ -68,19 +67,83 @@ class CafetMachineInfos extends Component {
         console.log(this.props);
         console.log(this.state);
 
+        const click_up = (report) => {
+            report.votes = report.votes + 1;
+            this.setState(this.state);
+        }
+        const click_down = (report) => {
+            if(report.votes > 1)
+                report.votes = report.votes - 1;
+            this.setState(this.state);
+        }
+
         return <Background>
             <Text style={{fontSize: 20}}>{this.state.name} {"\n"}</Text>
 
-            {this.state.reports.map((report) => {
-                return <Paragraph style={styles.text} key={report.id}>
-                    <Text>{report.name} avec {report.votes} votes {"\n"} {"\n"}</Text>
-                    <View style={{                flex: 1,
-                justifyContent: "space-evenly", height: 40,}}>
-                    <FloatingButton mode="contained">+ 1</FloatingButton>
-                    <FloatingButton mode="contained">- 1</FloatingButton>
+            <ScrollView>
+                {this.state.reports.map((report) => {
+                    return <View key={report.type}> 
+                        <View style={styles.text}>
+                            <Text style={{
+                                fontSize: 18,
+                                lineHeight: 20,
+                            }}>{report.name} avec {report.votes} votes {"\n"} {"\n"}</Text>
+
+                            <View style={{
+                             position: 'absolute',                                          
+                             bottom: 8,
+                             right: 80,
+                             width: 40,
+                             height: 40,
+                             flex: 1,
+                            }}>
+                                <TouchableOpacity activeOpacity={0.4} onPress={() => click_up(report)} style={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 80, 
+                                    backgroundColor: theme.colors.primary,
+                                    justifyContent: 'center',
+                                    alignItems:'center',
+
+                                }}><Text style={{
+                                    color: theme.colors.surface
+                                }}>+ 1</Text></TouchableOpacity>
+                            </View>
+
+                            {/*<View style={{
+                             position: 'absolute',                                          
+                             bottom: 15,
+                             right: 80,
+                             flex: 1,
+                            }}>
+                                <Text style={{
+                                    fontSize: 18,
+                                    lineHeight: 20,
+                                }}>{report.votes}</Text>
+                            </View>*/}
+
+                            <View style={{
+                             position: 'absolute',                                          
+                             bottom: 8,
+                             right: 30,
+                             flex: 1,
+                            }}>
+                                <TouchableOpacity activeOpacity={0.4} onPress={() => click_down(report)} style={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 80, 
+                                    backgroundColor: theme.colors.primary,
+                                    justifyContent: 'center',
+                                    alignItems:'center',
+
+                                }}><Text style={{
+                                    color: theme.colors.surface
+                                }}>- 1</Text></TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                </Paragraph>
-            })}
+                })}
+            </ScrollView>
         </Background>
     }
 
