@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var ldap = require('ldapjs');
 const jwtSecretKey = 'obrhHyrKo!FDefEHIPk';
 const bdd = require('../model/bdd');
+const logger = require('../utils/logger.js');
 
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
@@ -32,14 +33,14 @@ exports.validatetoken = function(req, res, next) {
 exports.signin = function(req , res) {
     
     var ecnUser = req.body.id;
-    console.log("[INFO] Signin request received. User is ",ecnUser);
+    logger.logInfo(`Signin request received. User is ${ecnUser}.`,req.ip);
     var ecnPwd = req.body.password;
    
     // Testing ECN LDAP connection
     authLdap(ecnUser, ecnPwd, (validCredentials) => {
         if(validCredentials){
             var data = {user: ecnUser};
-            console.log("[INFO] Generating token with data : " + data);
+            logger.logInfo("Generating token with data : " + data);
             
             bdd.testAndAddEcnUser(ecnUser);
 
@@ -59,8 +60,8 @@ exports.signin = function(req , res) {
             jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 res.header();
                 if(err){
-                    console.log('[ERROR] An error occurred while generating token');
-                    console.log(err);
+                    logger.logError('An error occurred while generating token');
+                    logger.logError(err);
                     res.status(500);
                     res.json({
                         authenticated: false,
@@ -108,17 +109,17 @@ async function authLdap(ecnUser, ecnPwd, callback) {
     var connected = false;
 
     ecn.on('error', (err) => {
-        console.log("[FATAL] Can't connect to ECN LDAP server.");
+        logger.logFatal("Can't connect to ECN LDAP server.");
     });
     
     ecn.bind('uid='+ecnUser+','+baseDn, ecnPwd, (err) => {
-        console.log('[INFO] Connection of user via ENC LDAP : '+ecnUser+ ' ...');
+        logger.logInfo('Connection of user via ENC LDAP : '+ecnUser+ ' ...');
         if(err) {
-            console.log("[INFO] Fail.");
+            logger.logWarn("Fail.");
             //console.log(err);
         } else {
             connected = true;
-            console.log("[INFO] Success.");
+            logger.logInfo("Success.");
         }
         ecn.unbind();
         callback(connected);
