@@ -33,7 +33,7 @@ exports.validatetoken = function(req, res, next) {
 exports.signin = function(req , res) {
     
     var ecnUser = req.body.id;
-    logger.logInfo("Signin request received. User is ",ecnUser);
+    logger.logInfo(`Signin request received. User is ${ecnUser}.`,req.ip);
     var ecnPwd = req.body.password;
    
     // Testing ECN LDAP connection
@@ -60,7 +60,7 @@ exports.signin = function(req , res) {
             jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 res.header();
                 if(err){
-                    logger.logError('[ERROR] An error occurred while generating token');
+                    logger.logError('An error occurred while generating token');
                     logger.logError(err);
                     res.status(500);
                     res.json({
