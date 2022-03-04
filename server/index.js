@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const https = require("https");
 const fs = require("fs");
+const logger = require('./utils/logger');
 
 //const cors = require('cors');
 
@@ -15,7 +16,7 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
   res.send('Nappucinno application back-end')
-  console.log("Connection from : "+req.ip)
+  logger.logInfo("Connection from : ", req.ip)
 })
 
 app.use('/ru', require('./routes/ru.route'));
@@ -30,7 +31,7 @@ app.get('/notfound', (req, res) => {
 })
 
 app.get('/authtest', function (req, res) {
-  console.log("Testing authentication");
+  logger.logInfo("Testing authentication", req.ip);
   
   //Check authentication
   require('./controller/auth').validatetoken(req, res, () => {
@@ -51,7 +52,7 @@ app.post('/signin', function (req, res) {
   },
   app
 ).listen(port, () => {
-  console.log(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
+  logger.logInfo(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
 });
 */
 
