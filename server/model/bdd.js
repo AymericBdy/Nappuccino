@@ -1,5 +1,6 @@
 const { Pool, Client } = require('pg');
 const fs = require('fs');
+const logger = require('../utils/logger.js');
 
 // Connect to database
 const data = fs.readFileSync('properties/bdd.json', 'utf8');
@@ -24,7 +25,7 @@ async function addEcnUser(userEcn) {
 
 async function doesEcnUserExist(userEcn) {
 
-  console.log(`[INFO] Testing if user ${userEcn} exists in the database.`);
+  logger.logInfo(`Testing if user ${userEcn} exists in the database.`);
   const rows = await query('SELECT login_ecn FROM users WHERE login_ecn = $1', [userEcn]);
   return Object.keys(rows).length !== 0;
 
@@ -34,9 +35,9 @@ function testAndAddEcnUser(userEcn){
   doesEcnUserExist(userEcn).then(exist => {
     if(!exist) {
       addEcnUser(userEcn);
-      console.log(`[INFO] Adding user ${userEcn}.`);
+      logger.logInfo(`Adding user ${userEcn}.`);
     } else {
-      console.log(`[INFO] User ${userEcn} already exists.`);
+      logger.logInfo(`User ${userEcn} already exists.`);
     }
   });
 }
