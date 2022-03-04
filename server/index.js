@@ -45,7 +45,7 @@ app.post('/signin', function (req, res) {
   user.signin(req,res);
 });
 
-/*https.createServer(
+https.createServer(
   {
     key: fs.readFileSync("certs/server.key"),
     cert: fs.readFileSync("certs/server.cert")
@@ -54,8 +54,7 @@ app.post('/signin', function (req, res) {
 ).listen(port, () => {
   logger.logInfo(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
 });
-*/
 
-app.listen(port, () => {
+/*app.listen(port, () => {
   console.log(`Nappucinno back-end listening at http://valentin.molina.pro:${port}`)
-})
+})*/
