@@ -1,38 +1,46 @@
 const { Pool, Client } = require('pg');
 const fs = require('fs');
 const logger = require('../utils/logger.js');
+const { nextTick } = require('process');
 
-// Connect to database
-const data = fs.readFileSync('properties/bdd.json', 'utf8');
-// parse JSON string to JSON object
-const logInfo = JSON.parse(data);
+// Connection to database
+const logInfo = JSON.parse(fs.readFileSync('properties/bdd.json', 'utf8'));
 const pool = new Pool(logInfo);
 
-async function query(query, params) {
-  const {rows, fields} = await pool.query(query, params);
 
-  return rows;
+// -------------------- Query Handling -------------------- //
+async function query(query, params, callback) {
+  pool.query(query, params, (err, result) => {
+    if(err) {
+      logger.logFatal("Can't execute the desired query.");
+      logger.logFatal("Error stack is : "+err.stack);
+      // raise exception ?
+    } else {
+      if(typeof callback === 'function') {
+        callback(result.rows);
+      }
+    }
+  });
 }
 
-async function addEcnUser(userEcn) {
 
-  const rows = await query('INSERT INTO users(login_ecn, report_count, priviledge) VALUES($1, $2, $3)',
+// -------------------- Users Handling -------------------- //
+async function addEcnUser(userEcn) {
+  query('INSERT INTO users(login_ecn, report_count, priviledge) VALUES($1, $2, $3)',
     [userEcn, 0, 'user']
   );
-
-  //to do : gestion des exeptions.
 }
 
-async function doesEcnUserExist(userEcn) {
-
+async function doesEcnUserExist(userEcn, callback) {
   logger.logInfo(`Testing if user ${userEcn} exists in the database.`);
-  const rows = await query('SELECT login_ecn FROM users WHERE login_ecn = $1', [userEcn]);
-  return Object.keys(rows).length !== 0;
-
+  query(
+    'SELECT login_ecn FROM users WHERE login_ecn = $1', 
+    [userEcn],
+    (rows) => {callback(Object.keys(rows).length !== 0);} );
 }
 
-function testAndAddEcnUser(userEcn){
-  doesEcnUserExist(userEcn).then(exist => {
+async function testAndAddEcnUser(userEcn){
+  doesEcnUserExist(userEcn, (exist) => {
     if(!exist) {
       addEcnUser(userEcn);
       logger.logInfo(`Adding user ${userEcn}.`);
@@ -42,87 +50,91 @@ function testAndAddEcnUser(userEcn){
   });
 }
 
-async function getCafetMachines() {
-  const rows = await query('SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;');
-  console.log(rows);
-  return rows;
+
+// -------------------- Cafet' & Dispenser -------------------- //
+// TO DO
+async function getDispensers(callback) {
+  query(
+    'SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;',
+    [],
+    (rows) => {
+      logger.logInfo(rows);
+      callback(rows);
+    });
 }
 
-async function getCafetMachineInfos(machineId) {
+async function getDispenserInfos(machineId) {
   //wip
 }
 
+async function updateDispenserStatus(status,dispenser_id){
+  query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
+      [status, dispenser_id]
+  );
+}
+
+async function addDispenser(dispenser_type){
+  query('INSERT INTO dispenser(dispenser_type, dispenser_status) VALUES($1,$2)',
+      [dispenser_type, 'fonctionnel']
+  );
+}
 
 async function addDispenserReport(date, report_type, comment, dispenser_id, login_ecn){
-    const rows = await query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, dispenser_id, login_ecn)'+
+    query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, dispenser_id, login_ecn)'+
         'VALUES($1,$2,$3,$4,$5,$6);'+
         'UPDATE users SET report_count = report_count + 1 WHERE login_ecn = $6',
         [date, report_type, comment, 0, dispenser_id, login_ecn]
     );
-    return rows
 }
 
+async function upvoteDispenserReport(report_id){
+  query('UPDATE report_dispenser SET validation_count = validation_count + 1 WHERE report_dispenser_id = $1',
+     [report_id]
+  );
+}
+
+async function downvoteDispenserReport(report_id){
+  query('UPDATE report_dispenser SET validation_count = validation_count - 1 WHERE report_dispenser_id = $1',
+      [report_id]
+  );
+}
+
+
+// -------------------- RU Reports -------------------- //
 // TO DO
 async function addRuReport(date, report_type, comment, dispenser_id, login_ecn){
-  const rows = await query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, login_ecn)'+
+  query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, login_ecn)'+
       'VALUES($1,$2,$3,$4,$5,$6);'+
       'UPDATE users SET report_count = report_count + 1 WHERE user_id = $6',
       [date, report_type, comment, 0, dispenser_id, login_ecn]
   );
-  return rows
-}
-
-
-async function addDispenser(dispenser_type){
-  const rows = await query('INSERT INTO dispenser(dispenser_type, dispenser_status) VALUES($1,$2)',
-      [dispenser_type, 'fonctionnel']
-  );
-  return rows
-}
-
-async function addIssue(message,login_ecn){
-  const rows = await query('INSERT INTO issues(message, login_ecn) VALUES($1,$2)',
-      [message,login_ecn]
-  );
-  return rows
 }
 
 async function upvoteRU(report_id){
-  const rows = await query('UPDATE report_ru SET validation_count = validation_count + 1 WHERE report_ru_id = $1',
+  query(
+      'UPDATE report_ru SET validation_count = validation_count + 1 WHERE report_ru_id = $1',
       [report_id]
   );
-  return rows
-}
-
-async function upvoteDispenser(report_id){
-  const rows = await query('UPDATE report_dispenser SET validation_count = validation_count + 1 WHERE report_dispenser_id = $1',
-     [report_id]
-  );
-  return rows
 }
 
 async function downvoteRU(report_id){
-  const rows = await query('UPDATE report_ru SET validation_count = validation_count - 1 WHERE report_ru_id = $1',
+  query(
+      'UPDATE report_ru SET validation_count = validation_count - 1 WHERE report_ru_id = $1',
       [report_id]
   );
-  return rows
 }
 
-async function downvoteDispenser(report_id){
-  const rows = await query('UPDATE report_dispenser SET validation_count = validation_count - 1 WHERE report_dispenser_id = $1',
-      [report_id]
+
+// -------------------- Issues Handling -------------------- //
+async function addIssue(message,login_ecn){
+  query(
+      'INSERT INTO issues(message, login_ecn) VALUES($1,$2)',
+      [message,login_ecn]
   );
-  return rows
 }
 
 
-async function updateDispenserStatus(status,dispenser_id){
-  const rows = await query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
-      [status, dispenser_id]
-  );
-  return rows
-}
-
+// -------------------- Exported Functions -------------------- //
 module.exports = {
   testAndAddEcnUser,
   getCafetMachines

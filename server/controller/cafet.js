@@ -4,7 +4,8 @@ var axios = require('axios')
 const bdd = require('../model/bdd');
 
 exports.list_machines = async (req, res) => {
-    bdd.getCafetMachines();
+    const callback = () => {};//to define
+    bdd.getDispensers(callback);
     res.status(200).send({
         machines: [
             {
