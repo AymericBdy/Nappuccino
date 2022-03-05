@@ -137,5 +137,5 @@ async function addIssue(message,login_ecn){
 // -------------------- Exported Functions -------------------- //
 module.exports = {
   testAndAddEcnUser,
-  getCafetMachines
+  getDispensers
 }
