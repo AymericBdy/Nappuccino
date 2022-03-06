@@ -1,44 +1,76 @@
-function log(type, text, ip) {
+function log(type, text, ip, user, priviledge) {
+    textLine = cut(text, 40)
+
     if( typeof ip !== 'undefined' ) {
-        text = text + "\tIP : "+ip
+        textLine[0] = textLine[0] + " IP : "+ip+" |";
     }
-    switch(type) {
-        case 'INFO' :
-            console.log("[INFO]\t"+text);
-            break;
-        case 'WARN' :
-            console.log("[WARN]\t"+text);
-            break;
-        case 'ERROR' :
-            console.log("[ERROR]\t"+text);
-            break;
-        case 'FATAL' :
-            console.log("[FATAL]\t"+text);
-            break;
-        default :
-            console.log("[UNKNOWN]\t"+text);
+
+    if( typeof user !== 'undefined' ) {
+        textLine[0] = textLine[0] + " USER : "+user+" |";
+    }
+
+    if( typeof priviledge !== 'undefined' ) {
+        textLine[0] = textLine[0] + " PRIVILEDGE : "+priviledge+" |";
+    }
+
+    for(const i in textLine) {
+        switch(type) {
+            case 'DEBUG' :
+                console.log("\x1b[0m\x1b[1m", "[DEBUG] "+textLine[i]);
+                break;
+            case 'INFO' :
+                console.log("\x1b[0m", "[INFO]  "+textLine[i]);
+                break;
+            case 'WARN' :
+                console.log("\x1b[0m\x1b[33m", "[WARN]  "+textLine[i]);
+                break;
+            case 'ERROR' :
+                console.log("\x1b[0m\x1b[31m", "[ERROR] "+textLine[i]);
+                break;
+            case 'FATAL' :
+                console.log("\x1b[0m\x1b[31m\x1b[1m", "[FATAL] "+textLine[i]);
+                break;
+            default :
+                console.log("\x1b[0m", "[UNKNOWN] "+textLine[i]);
+        }
     }
 }
 
-function logInfo(text, ip) {
-    log('INFO', text, ip);
+function logDebug(text, ip, user, priviledge) {
+    log('DEBUG', text, ip, user, priviledge);
 }
 
-function logWarn(text, ip) {
-    log('WARN', text, ip);
+function logInfo(text, ip, user, priviledge) {
+    log('INFO', text, ip, user, priviledge);
 }
 
-function logError(text, ip) {
-    log('ERROR', text, ip);
+function logWarn(text, ip, user, priviledge) {
+    log('WARN', text, ip, user, priviledge);
 }
 
-function logFatal(text, ip) {
-    log('FATAL', text, ip);
+function logError(text, ip, user, priviledge) {
+    log('ERROR', text, ip, user, priviledge);
+}
+
+function logFatal(text, ip, user, priviledge) {
+    log('FATAL', text, ip, user, priviledge);
+}
+
+function cut(str, len) {
+    if (str.length <= len) {
+        return [str+" ".repeat(len-str.length)+" |"];
+    }
+    var indexSpace = len;
+    while(indexSpace >= 0 && str[indexSpace] != " "){
+        indexSpace -- ;
+    }
+    return [str.substr(0, indexSpace)+" ".repeat(len-indexSpace)+" |"].concat(cut(str.substr(indexSpace+1, str.length), len));
 }
 
 module.exports = {
+    logDebug,
     logInfo,
     logError,
     logWarn,
-    logFatal
+    logFatal,
 }
