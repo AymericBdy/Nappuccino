@@ -1,13 +1,17 @@
-var jwt = require('jsonwebtoken');
-var ldap = require('ldapjs');
-const jwtSecretKey = 'obrhHyrKo!FDefEHIPk';
+const jwt = require('jsonwebtoken');
+const ldap = require('ldapjs');
+const fs = require('fs');
+
+const jwtSecretKey = fs.readFileSync('properties/jwtSecret', 'utf-8');
+
 const bdd = require('../model/bdd');
 const logger = require('../utils/logger.js');
 
+logger.logInfo("jwtSecretKey from properties file : " + jwtSecretKey);
+
 exports.validatetoken = function(req, res, next) {
     if(req.headers.authorization) {
-        const token = req.header('Authorization').replace('Bearer ', '')
-        const jwt = require('jsonwebtoken')
+        const token = req.header('Authorization').replace('Bearer ', '');
         try{
             const payload = jwt.verify(token, jwtSecretKey);
             /*console.log("You are in");
@@ -39,54 +43,64 @@ exports.signin = function(req , res) {
     // Testing ECN LDAP connection
     authLdap(ecnUser, ecnPwd, (validCredentials) => {
         if(validCredentials){
-            var data = {user: ecnUser};//to do : add the priviledge into the token's data
-            logger.logInfo("Generating token with data : " + data);
-            
+            // first add user to database
             bdd.testAndAddEcnUser(ecnUser);
-
-            var now = Math.floor(Date.now() / 1000),
-                iat = (now - 10),
-                expiresIn = 3600,
-                expr = (now + expiresIn),
-                notBefore = (now - 10),
-                jwtId = Math.random().toString(36).substring(7);
-            var payload = {
-                iat: iat,
-                jwtid : jwtId,
-                audience : 'TEST',
-                data : data
-            };	
-                
-            jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
-                res.header();
-                if(err){
-                    logger.logError('An error occurred while generating token');
-                    logger.logError(err);
-                    res.status(500);
-                    res.json({
-                        authenticated: false,
-                        message: "[ERROR] An error occurred while generating token",
-                        error: err
-                    });
+            
+            // then create token containing user login and priviledge level.
+            var data ;
+            bdd.getUserPriviledge(ecnUser, (rows) => {
+                data = {
+                    user: ecnUser,
+                    priviledge : rows[0].priviledge // Note VM : could be handle more properly...
                 }
-                else{
-                    if(token != false){
-                        res.status(200);
-                        res.json({
-                            authenticated: true,
-                            token: token,
-                            data: data
-                        });
-                    }
-                    else{
+            
+                logger.logInfo("Generating token with data : " + JSON.stringify(data));
+                
+
+                var now = Math.floor(Date.now() / 1000),
+                    iat = (now - 10),
+                    expiresIn = 3600,
+                    expr = (now + expiresIn),
+                    notBefore = (now - 10),
+                    jwtId = Math.random().toString(36).substring(7);
+                var payload = {
+                    iat: iat, // Note VM : why don't we put only the data in the payload ?
+                    jwtid : jwtId,
+                    audience : 'TEST',
+                    data : data
+                };	
+                    
+                jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
+                    res.header();
+                    if(err){
+                        logger.logError('An error occurred while generating token');
+                        logger.logError(err);
                         res.status(500);
                         res.json({
                             authenticated: false,
-                            message: "[ERROR] Could not create token"
+                            message: "[ERROR] An error occurred while generating token",
+                            error: err
                         });
                     }
-                }
-                res.end();
+                    else{
+                        if(token != false){
+                            res.status(200);
+                            res.json({
+                                authenticated: true,
+                                token: token,
+                                data: data // Note VM : why do we send the send back ?
+                            });
+                        }
+                        else{
+                            res.status(500);
+                            res.json({
+                                authenticated: false,
+                                message: "[ERROR] Could not create token"
+                            });
+                        }
+                    }
+                    res.end();
+                });
             });
         }
         else {
@@ -116,7 +130,6 @@ async function authLdap(ecnUser, ecnPwd, callback) {
         logger.logInfo('Connection of user via ENC LDAP : '+ecnUser+ ' ...');
         if(err) {
             logger.logWarn("Fail.");
-            //console.log(err);
         } else {
             connected = true;
             logger.logInfo("Success.");

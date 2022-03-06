@@ -1,16 +1,16 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 const https = require("https");
 const fs = require("fs");
+
+const user = require("./controller/auth.js");
 const logger = require('./utils/logger');
 
 //const cors = require('cors');
 
+const app = express();
 const port = 3000
-
 app.use(express.static('public'))
-
 // Parse requests of content-type - application/json
 app.use(bodyParser.json());
 
@@ -25,22 +25,15 @@ app.use('/tan', require('./routes/tan.route'));
 
 app.use('/cafet', require('./routes/cafet.route'));
 
-// to be removed ?
-// //Examples :
-// app.get('/notfound', (req, res) => {
-//   res.status(404).send("Not found")
-// })
-
 app.get('/authtest', function (req, res) {
   logger.logInfo("Testing authentication", req.ip);
   
   //Check authentication
-  require('./controller/auth').validatetoken(req, res, () => {
+  user.validatetoken(req, res, () => {
     res.status(200).send({code: 200});
   });
 })
 
-const user = require("./controller/auth.js");
 const { fstat } = require('fs');
 app.post('/signin', function (req, res) {
   user.signin(req,res);

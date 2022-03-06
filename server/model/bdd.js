@@ -50,6 +50,15 @@ async function testAndAddEcnUser(userEcn){
   });
 }
 
+async function getUserPriviledge(userEcn, callback) {
+  logger.logInfo(`Getting priviledge of user ${userEcn}`);
+  query(
+    'SELECT priviledge FROM users WHERE login_ecn = $1',
+    [userEcn],
+    callback
+  )
+}
+
 
 // -------------------- Cafet' & Dispenser -------------------- //
 // TO DO
@@ -137,5 +146,6 @@ async function addIssue(message,login_ecn){
 // -------------------- Exported Functions -------------------- //
 module.exports = {
   testAndAddEcnUser,
+  getUserPriviledge,
   getDispensers
 }

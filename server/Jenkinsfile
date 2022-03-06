@@ -22,6 +22,7 @@ pipeline {
                     cp /etc/letsencrypt/live/valentin.molina.pro/privkey.pem certs/server.key
                     mkdir properties || exit 0
                     cp /home/momo/Nappuccino/server/properties/bdd.json properties/bdd.json
+                    cp /home/momo/Nappuccino/server/properties/jwtSecret properties/jwtSecret
                     git checkout backend
                     docker build . -t nappuccino
                 """
