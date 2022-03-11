@@ -44,6 +44,9 @@ class LoginScreenClass extends Component {
   }
 
   loginPressed(auth) {
+    if(!this.state.buttonEnabled) {
+      return;
+    }
     //On réinisialise les erreurs et on indique que ça charge
     this.setState({
       ...this.state,

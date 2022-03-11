@@ -17,9 +17,7 @@ export default function CafetViewReports({ route, navigation }) {
         flex:1,
         margin: 10
       }}>
-        <ScrollView>
           <CafetMachineInfos machine_id={route.params.id} type_machine={route.params.type}></CafetMachineInfos>
-        </ScrollView>
 
         <FAB
           style={{
@@ -27,6 +25,7 @@ export default function CafetViewReports({ route, navigation }) {
             margin: 16,
             right: 0,
             bottom: 0,
+            backgroundColor: theme.colors.primary,
           }}
           icon="plus"
           onPress={() => {

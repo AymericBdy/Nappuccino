@@ -138,7 +138,7 @@ export const AuthContainer = (props) => {
             return;
           }
 
-          await timeout(1000, () => refreshToken(token));
+          await timeout(1000, refreshToken(token));
 
           dispatch({type: AUTHENTICATED});
         } catch (error) {
