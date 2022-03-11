@@ -1,23 +1,24 @@
 import React, { useState } from "react"
 import Background from '../../components/Background'
-import { View, ScrollView, Text, StyleSheet } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, TextInput } from 'react-native'
 import BackButton from '../../components/BackButton'
 import Button from '../../components/Button'
 import Logo from '../../components/Logo'
 import Header from '../../components/Header'
+import Paragraph from "../../components/Paragraph"
 import { Picker } from "@react-native-picker/picker"
 import { theme } from '../../core/theme'
 
-// report pour une machine à café, faudrait créer des reports différents sur les distributeurs
-
-// TODO : faire que le menu déroulant apparaisse en dessous du bouton + aligner les trucs en haut
 
 export default function CafetNewReportMachCaf({ navigation }) {
-    const [pb, setPb] = useState('Unknown')
-    var items=["Paiement sans contact impossible", "Plus de gobelets", "Plus de sucre", "Expresso", "Expresso allongé", 
+    const [pb, setPb] = useState('Unknown');
+    var items=["Paiement sans contact impossible", "Pas de gobelets", "Pas de sucre", "Expresso", "Expresso allongé", 
     "Expresso crème", "Expresso crème allongé", "Ristretto", "Café soluble décaféiné", "Café soluble au lait", 
     "Cappuccino", "Cappuccino noisette", "Cappuccino à la française", "Latte", "Boisson au cacao", "Viennois au cacao",
-    "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"]
+    "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"];
+    const [text, onChangeText] = React.useState(null);
+  
+
   return (
       <Background>
       <View>
@@ -33,8 +34,24 @@ export default function CafetNewReportMachCaf({ navigation }) {
         return (<Picker.Item label={item} value={index} key={index}/>) 
     })}
       </Picker>
+      <Paragraph>
+        Un commentaire à ajouter ?
+      </Paragraph>
+      <TextInput
+        placeholder={'Commentaires'}
+        multiline
+        numberOfLines={4}
+        onChangeText={text => onChangeText(text)}
+        value={text}
+        style={{textAlignVertical:'top',
+        backgroundColor: theme.colors.secondary,
+        borderBottomColor: '#000000',
+        borderBottomWidth: 1,}}
+        />
       <Button mode="contained"
-          onPress={() => navigation.goBack()}>
+          onPress={() => {
+            if (pb!="Unknown")
+            navigation.navigate("CafetHome")}}>
           Valider
         </Button>
       </View>
@@ -52,4 +69,13 @@ const styles = StyleSheet.create({
       borderColor: "#666",
       backgroundColor: theme.colors.secondary,
     },
+    input: {
+      width:300,
+      borderBottomColor:'red',
+      borderBottomWidth:1,
+      borderWidth: 1,
+      borderColor: "#666",
+      textColor: theme.colors.primary,
+      backgroundColor: theme.colors.surface,
+  },
   })
