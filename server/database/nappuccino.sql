@@ -52,7 +52,6 @@ CREATE TABLE public.report_dispenser (
                 report_dispenser_id INTEGER NOT NULL DEFAULT nextval('public.report_dispenser_report_dispenser_id_seq'),
                 date TIMESTAMP NOT NULL,
                 comment VARCHAR,
-                ttl TIME NOT NULL,
                 display BOOLEAN NOT NULL,
                 reliability INTEGER DEFAULT 50 NOT NULL,
                 login_ecn VARCHAR NOT NULL,
