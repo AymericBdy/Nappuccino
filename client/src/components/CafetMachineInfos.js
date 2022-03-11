@@ -51,7 +51,6 @@ class CafetMachineInfos extends Component {
         });
     }
 
-
     render() {
         const styles = StyleSheet.create({
             text: {
@@ -70,12 +69,11 @@ class CafetMachineInfos extends Component {
         console.log(this.state);
 
         const click_up = (report) => {
-            report.votes = report.votes + 1;
+            report.upvotes = report.upvotes + 1;
             this.setState(this.state);
         }
         const click_down = (report) => {
-            if(report.votes > 1)
-                report.votes = report.votes - 1;
+            report.downvotes = report.downvotes + 1;
             this.setState(this.state);
         }
 
@@ -90,7 +88,7 @@ class CafetMachineInfos extends Component {
                                 fontSize: 18,
                                 lineHeight: 20,
                             }}>{report.type} avec {report.votes} votes {"\n"} {"\n"}</Text>
-
+ 
                             <View style={{
                              position: 'absolute',                                          
                              bottom: 8,

@@ -1,6 +1,9 @@
 import React, {useContext, useEffect, useMemo, useReducer} from 'react';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import BackendAdress from '../helpers/Backend';
+import {
+  ToastAndroid,
+} from "react-native";
 
 export const AuthContext = React.createContext('auth');
 
@@ -43,6 +46,15 @@ const refreshToken = token =>
     },
   }).then(result => result.json());
 
+const timeout = (ms, promise) => {
+    return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+            reject(new Error("timeout"))
+        }, ms);
+        promise.then(resolve, reject)
+    })
+};
+  
 /**
  * Component qui gère l'état authentifié ou non de l'utilisateur
  */
@@ -126,11 +138,20 @@ export const AuthContainer = (props) => {
             return;
           }
 
-          await refreshToken(token);
+          await timeout(1000, () => refreshToken(token));
 
           dispatch({type: AUTHENTICATED});
         } catch (error) {
+          ToastAndroid.showWithGravity(
+            "Erreur lors de la connexion, réessayez plus tard...",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+
           console.error(error);
+          console.log("Logging out from here");
+          EncryptedStorage.setItem(ACCESS_TOKEN_KEY, null);
+          dispatch({type: LOGGED_OUT});
         }
       },
     }),

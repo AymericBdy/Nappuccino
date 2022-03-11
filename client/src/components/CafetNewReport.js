@@ -58,6 +58,7 @@ class CafetNewReport extends Component {
     render() {
         const items = this.state.selector_items;
         const onChange = (value, index) => {
+            console.log("Setting state change on");
             this.setState({
                 ...this.state,
                 selected_value: value,

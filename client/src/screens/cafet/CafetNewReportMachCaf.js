@@ -34,14 +34,14 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
       console.log('Sending report to '+searchUrl);
       console.log('Id is '+route.params.id);
 
-      const details = text ? text : '';
+      const comment = text ? text : '';
 
       fetch(searchUrl, {
         method: 'post',
         body: {
           machine_id: route.params.id,
           report_type: 1,
-          details: details,
+          comment: comment,
         }
       }).then(res => res.json()
       ).then(responseJson => {

@@ -31,13 +31,21 @@ exports.infos_machine = async (req, res) => {
         name: 'Machine à café sas',
         reports: [{
             type: "Plus de gobelets",
-            details: "Test affichage détails",
-            votes: 4,
+            comment: "Test affichage détails",
+            upvotes: 4,
+            downvotes: 1,
+            user_vote: 0,
+            date: 1647013789,
+            reliability: 70,
         },
         {
             type: "Plus de thé",
-            details: "Test affichage détails",
+            comment: "Test affichage détails",
             votes: 2,
+            downvotes: 0,
+            user_vote: 1,
+            date: 1647013789,
+            reliability: 40,
         }],
 
     })
