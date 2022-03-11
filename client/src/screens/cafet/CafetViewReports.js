@@ -31,9 +31,9 @@ export default function CafetViewReports({ route, navigation }) {
           icon="plus"
           onPress={() => {
             if(route.params.type == "cafe")
-              navigation.navigate("CafetNewReportMachCaf")
+              navigation.navigate("CafetNewReportMachCaf", {id: route.params.id})
             else if(route.params.type == "distrib")
-              navigation.navigate("CafetNewReportDistrib")
+              navigation.navigate("CafetNewReportDistrib", {id: route.params.id})
           }}
         />
       </View >

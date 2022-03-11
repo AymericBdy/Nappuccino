@@ -89,7 +89,7 @@ class CafetMachineInfos extends Component {
                             <Text style={{
                                 fontSize: 18,
                                 lineHeight: 20,
-                            }}>{report.name} avec {report.votes} votes {"\n"} {"\n"}</Text>
+                            }}>{report.type} avec {report.votes} votes {"\n"} {"\n"}</Text>
 
                             <View style={{
                              position: 'absolute',                                          
