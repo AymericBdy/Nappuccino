@@ -30,24 +30,25 @@ class CafetMachineInfos extends Component {
 
     getMachineInfos() {
         const id = this.state.id;
-        this.setState(
+        var searchUrl = BackendAdress()+"cafet/machine/reports/"+id;
+        //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
+        //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
+        console.log('Getting machines for '+searchUrl);
+        fetch(searchUrl).then(res => res.json()
+        ).then(responseJson => {
+            this.setState({
+                ...this.state,
+                ...responseJson,
+            })
+        }).catch(error => {
+            console.log("Erreur pour récupérer les infos de la machine "+id, error);
+            this.setState(
             {
                 ...this.state,
-                name: this.state.type_machine == 'cafe' ? 'Machine à café sas' : 'Distributeur sas',
-                reports: [{
-                    type: 3,
-                    name: "Plus de gobelets",
-                    details: "Test affichage détails",
-                    votes: 4,
-                },
-                {
-                    type: 4,
-                    name: "Plus de thé",
-                    details: "Test affichage détails",
-                    votes: 2,
-                }],
-            }
-        );
+                name: "Erreur",
+                reports: [],
+            })
+        });
     }
 
 
@@ -88,7 +89,7 @@ class CafetMachineInfos extends Component {
                             <Text style={{
                                 fontSize: 18,
                                 lineHeight: 20,
-                            }}>{report.name} avec {report.votes} votes {"\n"} {"\n"}</Text>
+                            }}>{report.type} avec {report.votes} votes {"\n"} {"\n"}</Text>
 
                             <View style={{
                              position: 'absolute',                                          

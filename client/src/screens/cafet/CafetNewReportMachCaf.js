@@ -1,45 +1,94 @@
 import React, { useState } from "react"
 import Background from '../../components/Background'
-import { View, ScrollView, Text, StyleSheet } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, TextInput } from 'react-native'
 import BackButton from '../../components/BackButton'
 import Button from '../../components/Button'
 import Logo from '../../components/Logo'
 import Header from '../../components/Header'
+import Paragraph from "../../components/Paragraph"
 import { Picker } from "@react-native-picker/picker"
 import { theme } from '../../core/theme'
+import BackendAdress from '../../helpers/Backend';
+import CafetNewReport from '../../components/CafetNewReport'
+import {
+  ToastAndroid,
+} from "react-native";
 
-// report pour une machine à café, faudrait créer des reports différents sur les distributeurs
 
-// TODO : faire que le menu déroulant apparaisse en dessous du bouton + aligner les trucs en haut
+export default function CafetNewReportMachCaf({ route, navigation }) {
+    const [pb, setPb] = useState('Unknown');
+    const [text, onChangeText] = useState(null);
+  
+  const validateReport = () => {
+    if(pb === "Unknown") {
+      //METTRE EN ROUGE
+          ToastAndroid.showWithGravity(
+            "Faut sélectionner un truc là...",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+    }
+    else {
+      var searchUrl = BackendAdress()+"cafet/machine/newreport";
 
-export default function CafetNewReportMachCaf({ navigation }) {
-    const [pb, setPb] = useState('Unknown')
-    var items=["Paiement sans contact impossible", "Plus de gobelets", "Plus de sucre", "Expresso", "Expresso allongé", 
-    "Expresso crème", "Expresso crème allongé", "Ristretto", "Café soluble décaféiné", "Café soluble au lait", 
-    "Cappuccino", "Cappuccino noisette", "Cappuccino à la française", "Latte", "Boisson au cacao", "Viennois au cacao",
-    "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"]
+      console.log('Sending report to '+searchUrl);
+      console.log('Id is '+route.params.id);
+
+      const details = text ? text : '';
+
+      fetch(searchUrl, {
+        method: 'post',
+        body: {
+          machine_id: route.params.id,
+          report_type: 1,
+          details: details,
+        }
+      }).then(res => res.json()
+      ).then(responseJson => {
+          navigation.goBack();
+          ToastAndroid.showWithGravity(
+            "Signalement envoyé !",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+      }).catch(error => {
+          console.log("Erreur pour envoyer un report sur la machine "+route.params.id, error);
+          ToastAndroid.showWithGravity(
+            "Erreur",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+      });
+    }
+  };
+
   return (
       <Background>
       <View>
-      <Header>Quel est le problème ?</Header>
-      <Picker
-        selectedValue={pb}
-        onValueChange={(value, index) => setPb(value)}
-        mode="dialog" // Android only
-        style={styles.picker}
-      >
-        <Picker.Item label="Sélectionnez le problème" value="Unknown" />
-        {items.map((item, index) => {
-        return (<Picker.Item label={item} value={index} key={index}/>) 
-    })}
-      </Picker>
-      <Button mode="contained"
-          onPress={() => navigation.goBack()}>
-          Valider
+        <Header>Quel est le problème ?</Header>
+        <CafetNewReport machine_id={route.params.id} type_machine={route.params.type}
+          selectedValue={pb} onValueChange={(value, index) => setPb(value)}>
+        </CafetNewReport>
+        <Paragraph>
+          Un commentaire à ajouter ?
+        </Paragraph>
+        <TextInput
+          placeholder={'Commentaires'}
+          multiline
+          numberOfLines={4}
+          onChangeText={text => onChangeText(text)}
+          value={text}
+          style={{textAlignVertical:'top',
+          backgroundColor: theme.colors.secondary,
+          borderBottomColor: '#000000',
+          borderBottomWidth: 1,}}
+        />
+        <Button mode="contained"
+            onPress={validateReport}>
+            Valider
         </Button>
       </View>
       </Background>
-
   )
 }
 
@@ -52,4 +101,13 @@ const styles = StyleSheet.create({
       borderColor: "#666",
       backgroundColor: theme.colors.secondary,
     },
+    input: {
+      width:300,
+      borderBottomColor:'red',
+      borderBottomWidth:1,
+      borderWidth: 1,
+      borderColor: "#666",
+      textColor: theme.colors.primary,
+      backgroundColor: theme.colors.surface,
+  },
   })
