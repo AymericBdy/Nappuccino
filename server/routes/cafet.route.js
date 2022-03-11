@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
+const logger = require('../utils/logger');
 const CafetController = require('../controller/cafet');
 
 //Check authentication
 //Not needed for the ru router.use(require('../controller/auth').validatetoken); 
 
 router.use(function timeLog (req, res, next) {
-    console.log('Acessing /cafet...')
-    next()
+    logger.logInfo('Acessing /cafet...', req.ip);
+    next();
 })
 
 router.get('/machines/list', CafetController.list_machines);
