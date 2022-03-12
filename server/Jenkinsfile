@@ -34,5 +34,12 @@ pipeline {
                 """
             }
         }
+        stage("test") {
+            steps {
+                sh """
+                    docker logs nappuccino-app
+                """
+            }
+        }
     }
 }
