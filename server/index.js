@@ -47,7 +47,7 @@ app.post('/signin', function (req, res) {
 });
 
 https.createServer(
-  {
+  
     key: fs.readFileSync("certs/server.key"),
     cert: fs.readFileSync("certs/server.cert")
   },
