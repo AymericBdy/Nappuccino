@@ -3,6 +3,7 @@ const fs = require('fs');
 const logger = require('../utils/logger.js');
 const { nextTick } = require('process');
 const moment = require('moment');
+const e = require('express');
 
 // Connection to database
 const logInfo = JSON.parse(fs.readFileSync('properties/bdd.json', 'utf8'));
@@ -14,11 +15,12 @@ async function query(query, params, callback) {
   pool.query(query, params, (err, result) => {
     if(err) {
       logger.logFatal("Can't execute the desired query.");
-      logger.logFatal("Error stack is : "+err.stack);
-      // raise exception ?
+      logger.logFatal("Error is : "+err);
+      // Aymeric :  makes crashing logger.logFatal("Error stack is : "+err.stack);
+      callback(err, []);
     } else {
       if(typeof callback === 'function') {
-        callback(result.rows);
+        callback(null, result.rows);
       }
     }
   });
@@ -37,7 +39,7 @@ async function doesEcnUserExist(userEcn, callback) {
   query(
     'SELECT login_ecn FROM users WHERE login_ecn = $1', 
     [userEcn],
-    (rows) => {callback(Object.keys(rows).length !== 0);} );
+    (error, rows) => {callback(Object.keys(rows).length !== 0);} );
 }
 
 async function testAndAddEcnUser(userEcn){
@@ -53,19 +55,17 @@ async function testAndAddEcnUser(userEcn){
 
 
 // -------------------- Cafet' & Dispenser -------------------- //
-// TO DO
+
+//Tested and working
 async function getDispensers(callback) {
   query(
     'SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;',
     [],
-    (rows) => {
-      logger.logInfo(rows);
-      callback(rows);
-    });
+    callback);
 }
 
 async function getDispenserInfos(machineId) {
-  //wip
+  //TODO
 }
 
 async function updateDispenserStatus(status,dispenser_id){
@@ -80,12 +80,26 @@ async function addDispenser(dispenser_type){
   );
 }
 
-async function addDispenserReport(date, report_type, comment, dispenser_id, login_ecn){
-    query('INSERT INTO report_dispenser(date, type, comment, display, reliability, dispenser_id, login_ecn)'+
-        'VALUES($1,$2,$3,$4,$5,$6,$7);'+
-        'UPDATE users SET report_count = report_count + 1 WHERE login_ecn = $6',
+//Tested and working
+async function addDispenserReport(date, report_type, comment, dispenser_id, login_ecn, callback){
+  query('INSERT INTO report_dispenser(date, type, comment, display, reliability, dispenser_id, login_ecn)'+
+        'VALUES($1,$2,$3,$4,$5,$6,$7);',
         [date, report_type, comment, 'TRUE', 50, dispenser_id, login_ecn]
-    );
+    , (error, result) => {
+      if(error) {
+        callback(error);
+      } else {
+        query('UPDATE users SET report_count = report_count + 1 WHERE login_ecn = $1',
+          [login_ecn],
+          (error, result) => {
+            if(error) {
+              callback(error);
+            } else {
+              callback(null);
+            }
+          });
+      }
+    });
 }
 
 async function addVoteDispenserReport(date, vote_type, report_id, login_ecn){
@@ -98,7 +112,7 @@ async function getDisplayedReports(callback){
   query(
     'SELECT * FROM public.report_dispenser WHERE display=TRUE;',
     [],
-    (rows) => {
+    (error, rows) => {
       logger.logInfo(rows);
       callback(rows);
     });
@@ -108,7 +122,7 @@ async function getReportVotes(report_id, callback){
   query(
     'SELECT * FROM public.votes WHERE report_id=$1;',
     [report_id],
-    (rows) => {
+    (error, rows) => {
       logger.logInfo(rows);
       callback(rows);
     });
@@ -216,5 +230,6 @@ async function addIssue(message,login_ecn){
 module.exports = {
   testAndAddEcnUser,
   getDispensers,
-  updateReliability
+  updateReliability,
+  addDispenserReport,
 }

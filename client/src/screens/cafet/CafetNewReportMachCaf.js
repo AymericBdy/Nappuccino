@@ -40,7 +40,7 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
         method: 'post',
         body: {
           machine_id: route.params.id,
-          report_type: 1,
+          report_type: pb,
           comment: comment,
         }
       }).then(res => res.json()

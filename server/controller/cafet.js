@@ -2,26 +2,21 @@ var express = require('express')
 //Axios permet les requètes sur des serveurs externes
 var axios = require('axios')
 const bdd = require('../model/bdd');
+const { report } = require('../routes/ru.route');
 
 exports.list_machines = async (req, res) => {
-    const callback = () => {};//TODO to define
-    bdd.getDispensers(callback);
-    res.status(200).send({
-        machines: [
-            {
-                id: 1,
-                name: 'Machine à café sas',
-                reports: [{
-                    type: "Plus de gobelets",
-                    votes: 4,
-                },
-                {
-                    type: "Plus de thé",
-                    votes: 2,
-                }]
-            }
-        ]
-    })
+    bdd.getDispensers((error, result) => {
+        if(error) {
+            res.status(500).send({
+                result: "Erreur de base de données",
+                error: error,
+            });
+        } else {
+            res.status(200).send({
+                machines: result
+            });
+        }
+    });
 }
 
 exports.infos_machine = async (req, res) => {
@@ -60,9 +55,26 @@ exports.vote_report = async (req, res) => {
 exports.new_report = async (req, res) => {
     //TODO ADD IN THE BDD
 
-    req.status(200).send({
-        result: "success"
-    });
+    const machine_id = req.body.machine_id;
+    const report_type = req.body.report_type;
+    const comment = req.body.comment;
+    const user = 'nap_test_user'; //TODO GET FROM AUTH TOKEN !!!
+
+    console.log("putting "+machine_id+" "+report_type+" "+comment);
+
+    await bdd.addDispenserReport("NOW()", report_type, comment, machine_id, user,
+        (error) => {
+            if(error) {
+            res.status(500).send({
+                result: "Erreur de base de données",
+                error: error,
+            });
+            } else {
+            res.status(200).send({
+                result: "success"
+            });
+            }
+        });
 }
 
 exports.report_list = async (req, res) => {
