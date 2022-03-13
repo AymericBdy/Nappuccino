@@ -8,7 +8,7 @@ import Header from './Header'
 import Button from './Button'
 import FloatingButton from './FloatingButton'
 import { theme } from '../core/theme'
-import BackendAdress from '../helpers/Backend';
+import { fetchBackend } from '../helpers/Backend';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Picker } from "@react-native-picker/picker"
 
@@ -34,11 +34,11 @@ class CafetNewReport extends Component {
 
     getReportTypesList() {
         const id = this.state.id;
-        var searchUrl = BackendAdress()+"cafet/machine/"+this.state.type_machine+"/report_list";
+        var searchUrl = "cafet/machine/"+this.state.type_machine+"/report_list";
 
         console.log('Getting report type list on '+searchUrl);
 
-        fetch(searchUrl).then(res => res.json()
+        fetchBackend(searchUrl).then(res => res.json()
         ).then(responseJson => {
             this.setState({
                 ...this.state,
