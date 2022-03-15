@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useMemo, useReducer} from 'react';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import BackendAdress from '../helpers/Backend';
+import { fetchBackend } from '../helpers/Backend';
 import {
   ToastAndroid,
 } from "react-native";
@@ -19,17 +19,13 @@ const ACCESS_TOKEN_KEY = 'access_token';
  * @returns Le résultat de la requète de connexion
  */
 const loginUser = (id, password) =>
-  fetch(BackendAdress()+'signin', {
+  fetchBackend('signin', {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+    body: {
       id: id,
       password: password,
-    }),
-  }).then(response => response.json());
+    },
+  }).then(res => res.json());
 
 /**
  * Se connecte au backend et vérifie si le token est valide
@@ -37,7 +33,7 @@ const loginUser = (id, password) =>
  * @returns Le résultat de la requète de validation du token
  */
 const refreshToken = token =>
-  fetch(BackendAdress()+"authtest", {
+fetchBackend("authtest", {
     method: 'GET',
     headers: {
       Accept: 'application/json',
@@ -69,12 +65,14 @@ export const AuthContainer = (props) => {
             ...state,
             authenticated: true,
             initialized: true,
+            accessToken: action.token,
           };
         case LOGGED_OUT:
             return {
               ...state,
               authenticated: false,
               initialized: true,
+              accessToken: null,
             };
         default:
           throw new Error(`${action.type} is not a valid action type`);
@@ -83,6 +81,7 @@ export const AuthContainer = (props) => {
     { //Etat initial
       authenticated: false,
       initialized: false,
+      accessToken: null,
     },
   );
 
@@ -92,7 +91,7 @@ export const AuthContainer = (props) => {
     () => ({
       login: async (id, password) => {
         try {
-          console.log("Log on "+BackendAdress()+'signin');
+          console.log("Do signin");
           //Connexion au ldap et vérification des identifiants
           const result = await loginUser(id, password);
 
@@ -104,7 +103,7 @@ export const AuthContainer = (props) => {
             await EncryptedStorage.setItem(ACCESS_TOKEN_KEY, result.token);
   
             //Et on affiche l'application en tant qu'utilisateur connecté
-            dispatch({type: AUTHENTICATED});
+            dispatch({type: AUTHENTICATED, token: result.token});
 
             return ""; //Indique à l'écran de connexion que l'authentification a fonctionné
           } else {
@@ -140,7 +139,7 @@ export const AuthContainer = (props) => {
 
           await timeout(1000, refreshToken(token));
 
-          dispatch({type: AUTHENTICATED});
+          dispatch({type: AUTHENTICATED, token: result.token});
         } catch (error) {
           ToastAndroid.showWithGravity(
             "Erreur lors de la connexion, réessayez plus tard...",
@@ -165,7 +164,7 @@ export const AuthContainer = (props) => {
 
   // This uses a render prop to pass the authState to the containers children
   return (
-    <AuthContext.Provider value={facade}>
+    <AuthContext.Provider value={{facade, authState}}>
         {console.log("Setting app state ",authState)}
       {props.children(authState)}
     </AuthContext.Provider>

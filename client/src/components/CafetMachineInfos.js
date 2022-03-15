@@ -3,7 +3,7 @@ import { View, StyleSheet, UIManager, LayoutAnimation, Platform } from 'react-na
 import { Text } from 'react-native-paper'
 import Background from './Background';
 import { theme } from '../core/theme'
-import BackendAdress from '../helpers/Backend';
+import { fetchBackend } from '../helpers/Backend';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 class CafetMachineInfos extends Component {
@@ -76,11 +76,11 @@ class CafetMachineInfos extends Component {
 
     getMachineInfos() {
         const id = this.state.id;
-        var searchUrl = BackendAdress()+"cafet/machine/reports/"+id;
+        var searchUrl = "cafet/machine/reports/"+id;
         //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
         //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
         console.log('Getting machines for '+searchUrl);
-        fetch(searchUrl).then(res => res.json()
+        fetchBackend(searchUrl).then(res => res.json()
         ).then(responseJson => {
             this.setState({
                 ...this.state,

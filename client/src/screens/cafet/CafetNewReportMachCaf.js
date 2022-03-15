@@ -8,8 +8,9 @@ import Header from '../../components/Header'
 import Paragraph from "../../components/Paragraph"
 import { Picker } from "@react-native-picker/picker"
 import { theme } from '../../core/theme'
-import BackendAdress from '../../helpers/Backend';
+import {Backend, fetchBackend} from '../../helpers/Backend';
 import CafetNewReport from '../../components/CafetNewReport'
+import {AuthContext, useAuth} from '../../helpers/Auth';
 import {
   ToastAndroid,
 } from "react-native";
@@ -18,6 +19,8 @@ import {
 export default function CafetNewReportMachCaf({ route, navigation }) {
     const [pb, setPb] = useState('Unknown');
     const [text, onChangeText] = useState(null);
+
+    const auth = useAuth();
   
   const validateReport = () => {
     if(pb === "Unknown") {
@@ -27,25 +30,30 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
             ToastAndroid.SHORT,
             ToastAndroid.BOTTOM
           );
+    } else if(auth.authState.accessToken == null && false) {
+      ToastAndroid.showWithGravity(
+        "Vous devez être connecté",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
     }
     else {
-      var searchUrl = BackendAdress()+"cafet/machine/newreport";
+      console.log("will do it");
+      var searchUrl = "cafet/machine/newreport";
 
       console.log('Sending report to '+searchUrl);
       console.log('Id is '+route.params.id);
 
       const comment = text ? text : '';
 
-      const body = JSON.stringify({
-        machine_id: route.params.id,
-        report_type: pb,
-        comment: comment,
-      });
-      console.log("Send pb ",body);
-      fetch(searchUrl, {
+      fetchBackend(searchUrl, {
         method: 'post',
-        body: body,
-      }).then(res => res.json()
+        body: {
+          machine_id: route.params.id,
+          report_type: pb,
+          comment: comment,
+        }
+      }, auth).then(res => res.json()
       ).then(responseJson => {
           navigation.goBack();
           ToastAndroid.showWithGravity(

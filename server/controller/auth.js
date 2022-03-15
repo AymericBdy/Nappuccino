@@ -116,7 +116,7 @@ async function authLdap(ecnUser, ecnPwd, callback) {
         logger.logInfo('Connection of user via ENC LDAP : '+ecnUser+ ' ...');
         if(err) {
             logger.logWarn("Fail.");
-            //console.log(err);
+            console.log(err);
         } else {
             connected = true;
             logger.logInfo("Success.");
