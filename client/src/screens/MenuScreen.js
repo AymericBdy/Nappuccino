@@ -12,7 +12,7 @@ import {AuthContext, useAuth} from '../helpers/Auth';
 
 export default function Menu({ navigation, loggedIn }) {
   const auth = useAuth();
-  const onLogout = () => auth.logout();
+  const onLogout = () => auth.facade.logout();
   return (
     <Background>
       <ScrollView>

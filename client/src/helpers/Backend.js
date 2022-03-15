@@ -8,11 +8,15 @@ export function fetchBackend(url, request, auth) {
     }
     if(request) {
         if (request.body) {
-            request.headers['Content-Type'] = 'application/json';
+            request.headers = {
+                ...request.headers,
+                'Content-Type': 'application/json',
+            }
             request.body = JSON.stringify(request.body);
         }
     }
     console.log("Fetch with ",request);
+    console.log("url "+backendUrl() + url);
     return fetch(backendUrl() + url, request);
 }
 

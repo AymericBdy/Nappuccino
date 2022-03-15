@@ -21,15 +21,11 @@ const ACCESS_TOKEN_KEY = 'access_token';
 const loginUser = (id, password) =>
   fetchBackend('signin', {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+    body: {
       id: id,
       password: password,
-    }),
-  }).then(response => response.json());
+    },
+  }).then(res => res.json());
 
 /**
  * Se connecte au backend et vérifie si le token est valide

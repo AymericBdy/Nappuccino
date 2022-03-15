@@ -70,7 +70,7 @@ class LoginScreenClass extends Component {
       return;
     }
   
-    console.log("Auith is "+auth);
+    console.log("Auth is "+auth);
     //On se login sur le ldap
     auth.facade.login(this.state.user, this.state.password).then(result => {
       //console.log("Got authentication result "+result);
@@ -81,7 +81,7 @@ class LoginScreenClass extends Component {
           userError: result,
           passwordError: result ? " " : "",
           buttonText: "S'authentifier",
-          buttonEnabled: !result,
+          buttonEnabled: true,
         });
     });
   }
