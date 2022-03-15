@@ -159,3 +159,10 @@ REFERENCES public.report_dispenser (report_dispenser_id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
+
+GRANT SELECT ON TABLE public.dispenser TO api;
+GRANT SELECT ON TABLE public.report_type TO api;
+GRANT INSERT, SELECT, UPDATE ON TABLE public.report_dispenser TO api;
+GRANT USAGE, SELECT ON SEQUENCE report_dispenser_report_dispenser_id_seq TO api;
+GRANT SELECT ON TABLE public.status TO api;
+GRANT SELECT, INSERT ON TABLE public.users TO api;
