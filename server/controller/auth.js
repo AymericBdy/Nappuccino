@@ -39,7 +39,7 @@ exports.signin = function(req , res) {
     // Testing ECN LDAP connection
     authLdap(ecnUser, ecnPwd, (validCredentials) => {
         if(validCredentials){
-            var data = {user: ecnUser};
+            var data = {user: ecnUser};//to do : add the priviledge into the token's data
             logger.logInfo("Generating token with data : " + data);
             
             bdd.testAndAddEcnUser(ecnUser);

@@ -1,5 +1,5 @@
 pipeline {
-    agent { label "momo-linux"}
+    agent { label "momo_server"}
     stages {
         stage("clean") {
             steps {
@@ -21,7 +21,7 @@ pipeline {
                     cp /etc/letsencrypt/live/valentin.molina.pro/fullchain.pem certs/server.cert
                     cp /etc/letsencrypt/live/valentin.molina.pro/privkey.pem certs/server.key
                     mkdir properties || exit 0
-                    cp /home/momo/Nappuccino/server/properties/bdd.json properties/bdd.json
+                    cp /home/jenkins/Nappuccino-data/bdd.json properties/bdd.json
                     mkdir logs || exit 0
                     git checkout backend
                     docker build . -t nappuccino
@@ -32,6 +32,13 @@ pipeline {
             steps {
                 sh """
                     docker run --rm -p 3000:3000 -v logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino
+                """
+            }
+        }
+        stage("test") {
+            steps {
+                sh """
+                    docker logs nappuccino-app
                 """
             }
         }

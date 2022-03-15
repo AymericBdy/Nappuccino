@@ -12,10 +12,7 @@ import MenuRU from '../components/MenuRU'
 export default function RuScreen({ navigation }) {
   return (
     <Background>
-
       <MenuRU />
-
-      <BackButton goBack={navigation.goBack} />
     </Background>
 
   )

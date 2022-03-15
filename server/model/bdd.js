@@ -1,38 +1,49 @@
 const { Pool, Client } = require('pg');
 const fs = require('fs');
 const logger = require('../utils/logger.js');
+const { nextTick } = require('process');
+const moment = require('moment');
+const e = require('express');
 
-// Connect to database
-const data = fs.readFileSync('properties/bdd.json', 'utf8');
-// parse JSON string to JSON object
-const logInfo = JSON.parse(data);
+// Connection to database
+const logInfo = JSON.parse(fs.readFileSync('properties/bdd.json', 'utf8'));
 const pool = new Pool(logInfo);
 
-async function query(query, params) {
-  const {rows, fields} = await pool.query(query, params);
 
-  return rows;
+// -------------------- Query Handling -------------------- //
+async function query(query, params, callback) {
+  pool.query(query, params, (err, result) => {
+    if(err) {
+      logger.logFatal("Can't execute the desired query.");
+      logger.logFatal("Error is : "+err);
+      // Aymeric :  makes crashing logger.logFatal("Error stack is : "+err.stack);
+      callback(err, []);
+    } else {
+      if(typeof callback === 'function') {
+        callback(null, result.rows);
+      }
+    }
+  });
 }
 
-async function addEcnUser(userEcn) {
 
-  const rows = await query('INSERT INTO users(login_ecn, report_count, status) VALUES($1, $2, $3)',
+// -------------------- Users Handling -------------------- //
+async function addEcnUser(userEcn) {
+  query('INSERT INTO users(login_ecn, report_count, priviledge) VALUES($1, $2, $3)',
     [userEcn, 0, 'user']
   );
-
-  //to do : gestion des exeptions.
 }
 
-async function doesEcnUserExist(userEcn) {
-
+async function doesEcnUserExist(userEcn, callback) {
   logger.logInfo(`Testing if user ${userEcn} exists in the database.`);
-  const rows = await query('SELECT login_ecn FROM users WHERE login_ecn = $1', [userEcn]);
-  return Object.keys(rows).length !== 0;
-
+  query(
+    'SELECT login_ecn FROM users WHERE login_ecn = $1', 
+    [userEcn],
+    (error, rows) => {callback(Object.keys(rows).length !== 0);} );
 }
 
-function testAndAddEcnUser(userEcn){
-  doesEcnUserExist(userEcn).then(exist => {
+async function testAndAddEcnUser(userEcn){
+  doesEcnUserExist(userEcn, (exist) => {
     if(!exist) {
       addEcnUser(userEcn);
       logger.logInfo(`Adding user ${userEcn}.`);
@@ -42,6 +53,183 @@ function testAndAddEcnUser(userEcn){
   });
 }
 
+
+// -------------------- Cafet' & Dispenser -------------------- //
+
+//Tested and working
+async function getDispensers(callback) {
+  query(
+    'SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;',
+    [],
+    callback);
+}
+
+async function getDispenserInfos(machineId) {
+  //TODO
+}
+
+async function updateDispenserStatus(status,dispenser_id){
+  query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
+      [status, dispenser_id]
+  );
+}
+
+async function addDispenser(dispenser_type){
+  query('INSERT INTO dispenser(dispenser_type, dispenser_status) VALUES($1,$2)',
+      [dispenser_type, 'fonctionnel']
+  );
+}
+
+//Tested and working
+async function addDispenserReport(date, report_type, comment, dispenser_id, login_ecn, callback){
+  query('INSERT INTO report_dispenser(date, type, comment, display, reliability, dispenser_id, login_ecn)'+
+        'VALUES($1,$2,$3,$4,$5,$6,$7);',
+        [date, report_type, comment, 'TRUE', 50, dispenser_id, login_ecn]
+    , (error, result) => {
+      if(error) {
+        callback(error);
+      } else {
+        query('UPDATE users SET report_count = report_count + 1 WHERE login_ecn = $1',
+          [login_ecn],
+          (error, result) => {
+            if(error) {
+              callback(error);
+            } else {
+              callback(null);
+            }
+          });
+      }
+    });
+}
+
+async function addVoteDispenserReport(date, vote_type, report_id, login_ecn){
+  query('INSERT INTO votes(date, vote_type, report_dispenser_id, login_ecn) VALUES($1,$2,$3,$4)',
+     [date, vote_type, report_id, login_ecn]
+  );
+}
+
+async function getDisplayedReports(callback){
+  query(
+    'SELECT * FROM public.report_dispenser WHERE display=TRUE;',
+    [],
+    (error, rows) => {
+      logger.logInfo(rows);
+      callback(rows);
+    });
+}
+
+async function getReportVotes(report_id, callback){
+  query(
+    'SELECT * FROM public.votes WHERE report_id=$1;',
+    [report_id],
+    (error, rows) => {
+      logger.logInfo(rows);
+      callback(rows);
+    });
+}
+
+async function updateReportsDisplay(){
+  query(
+    'UPDATE report_dispenser SET display = FALSE WHERE reliability=0 AND display=TRUE',
+    []
+  );
+}
+
+async function updateReportReliability(report_id, reliability){
+  query(
+    'UPDATE report_dispenser SET reliability = $2 WHERE report_dispenser_id = $1',
+    [report_id, reliability]
+  );
+}
+
+async function updateReliability(){
+
+  // constants for reliability calculation
+  let alpha = 5;
+  let beta = 10;
+  let gamma = 5;
+
+  let hours = 0;
+
+  // Get all displayed reports to update
+  getDisplayedReports((rows) => {
+    for(let i = 0; i<rows.length; i+=1){
+
+      let report = rows[i];
+      let upvotes = 0;
+      let downvotes = 0;
+
+      //for each report we get the votes
+      getReportVotes(report['report_dispenser_id'], votes => {
+
+        for(let j =0; j<votes.length; j+=1){
+          if(votes[j]['vote_type']){
+            upvotes+=1;
+          }else{
+            downvotes+=1;
+          }
+        }      
+
+      });
+
+      // Obtaining number of hours since the creation of the report
+      let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
+      let end_date = moment(new Date().getTime(), 'YYYY-MM-DD HH:mm:ss');
+      
+      let duration = moment.duration(end_date.diff(start_date));
+      hours = duration.asDays()*24; 
+
+      // Computing reliability
+      let reliability = min(100, max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
+      // Update reliability of the report being treated
+      updateReportReliability(report['report_dispenser_id'], reliability);
+    }
+  });
+  // Update the display attributes of reports to not display unreliable report
+  updateReportsDisplay();
+}
+
+
+
+
+// -------------------- RU Reports -------------------- //
+// TO DO
+async function addRuReport(date, report_type, comment, dispenser_id, login_ecn){
+  query('INSERT INTO report_dispenser(date, report_type, comment, validation_count, login_ecn)'+
+      'VALUES($1,$2,$3,$4,$5,$6);'+
+      'UPDATE users SET report_count = report_count + 1 WHERE user_id = $6',
+      [date, report_type, comment, 0, dispenser_id, login_ecn]
+  );
+}
+
+async function upvoteRU(report_id){
+  query(
+      'UPDATE report_ru SET validation_count = validation_count + 1 WHERE report_ru_id = $1',
+      [report_id]
+  );
+}
+
+async function downvoteRU(report_id){
+  query(
+      'UPDATE report_ru SET validation_count = validation_count - 1 WHERE report_ru_id = $1',
+      [report_id]
+  );
+}
+
+
+// -------------------- Issues Handling -------------------- //
+async function addIssue(message,login_ecn){
+  query(
+      'INSERT INTO issues(message, login_ecn) VALUES($1,$2)',
+      [message,login_ecn]
+  );
+}
+
+
+// -------------------- Exported Functions -------------------- //
 module.exports = {
-  testAndAddEcnUser
+  testAndAddEcnUser,
+  getDispensers,
+  updateReliability,
+  addDispenserReport,
 }

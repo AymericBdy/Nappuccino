@@ -1,44 +1,196 @@
 import React from 'react'
 import { Provider } from 'react-native-paper'
+import { View, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { theme } from './core/theme'
 import {
     StartScreen,
     LoginScreen,
-    RegisterScreen,
-    ResetPasswordScreen,
     Dashboard,
     TanScreen,
     RuScreen,
+    MenuScreen,
+    SplashScreen,
+    AnnuaireScreen,
+    MapScreen,
+    CafetHome,
+    CafetNewReportMachCaf,
+    CafetNewReportDistrib,
+    CafetViewReports,
 } from './screens'
+import MenuButton from './components/MenuButton'
+import BackButton from './components/BackButton'
+import {AuthContainer, useAuth} from './helpers/Auth';
 
 const Stack = createStackNavigator()
 
 export default function App() {
     return (
         <Provider theme={theme}>
-            <NavigationContainer
+            
+      <AuthContainer>
+      {({authenticated, initialized}) => {
+          return <NavigationContainer
                 theme={{ colors: { background: theme.colors.surface } }}>
                 <Stack.Navigator
-                    initialRouteName="StartScreen"
-                    screenOptions={{
-                        headerShown: false,
-                    }}
-
+                    initialRouteName={initialized ? (authenticated ? "Dashboard" : "StartScreen") : "SplashScreen"}
+                    screenOptions={({route, navigation}) => ({
+                        headerShown: true,
+                        headerLeft: () => (
+                            /*<BackButton
+                            goBack={() => navigation.pop(1)}
+                            />*/
+                            <MenuButton
+                                //Menu Text
+                                menutext="Menu"
+                                //Menu View Style
+                                menustyle={{marginRight: 16}}
+                                //Menu Text Style
+                                textStyle={{color: theme.colors.primary}}
+                                navigation={navigation}
+                                route={route}
+                                isIcon={true}
+                            />
+                          ),
+                        /*headerRight: () => (
+                          ),*/
+                    })}
                 >
-                    <Stack.Screen name="StartScreen" component={StartScreen} />
-                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
-                    <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-                    <Stack.Screen name="Dashboard" component={Dashboard} />
-                    <Stack.Screen name="TanScreen" component={TanScreen} />
-                    <Stack.Screen name="RuScreen" component={RuScreen} />
-                    <Stack.Screen
-                        name="ResetPasswordScreen"
-                        component={ResetPasswordScreen}
-                    />
+                    {initialized ? (
+                        authenticated ? (
+                            <></>
+                        ) : (
+                            <>
+                            <Stack.Screen name="StartScreen" component={StartScreen}
+                                options={{    
+                                    headerMode: 'none',
+                                }}/>
+                            <Stack.Screen name="LoginScreen" component={LoginScreen}
+                                options={{  
+                                    headerMode: 'none',
+                                }}/>
+                            </>
+                        )
+                    ) : (
+                        <Stack.Screen name="SplashScreen" component={SplashScreen}
+                        options={{    
+                            headerMode: 'none',
+                        }}/>
+                    )}
+                    <Stack.Screen name="Dashboard"
+                    options={{
+                        //headerLeft: null,
+                        title: 'Navigation', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}>
+                        {(props) => <Dashboard loggedIn={authenticated} {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="CafetHome" component={CafetHome} 
+                    options={{  
+                        title: 'Infos Cafet', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetNewReportMachCaf" component={CafetNewReportMachCaf} 
+                    options={{  
+                        title: 'Nouveau signalement', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetNewReportDistrib" component={CafetNewReportDistrib} 
+                    options={{  
+                        title: 'Nouveau signalement', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="CafetViewReports" component={CafetViewReports} 
+                    options={{  
+                        title: 'Infos machine', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="TanScreen" component={TanScreen} 
+                    options={{  
+                        title: 'Horaires station ECN', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="AnnuaireScreen" component={AnnuaireScreen} 
+                    options={{  
+                        title: 'Annuaire', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="MapScreen" component={MapScreen} 
+                    options={{  
+                        title: "Plan de l'école", //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="RuScreen" component={RuScreen} 
+                    options={{  
+                        title: 'Au menu ce midi', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="MenuScreen"
+                    options={{
+                        //headerLeft: null,
+                        title: '',
+                    }}>
+                    {(props) => <MenuScreen loggedIn={authenticated} {...props} />}
+                  </Stack.Screen>
                 </Stack.Navigator>
             </NavigationContainer>
+        }}
+      </AuthContainer>
         </Provider>
     )
 }

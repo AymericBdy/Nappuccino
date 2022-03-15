@@ -16,10 +16,9 @@ class HoraireTAN extends Component {
         direction: 1,
     }
 
-    checkMenu(direction) {
-        //todo use BackendAdress()+"tan/ecn/"+direction;//
-        var searchUrl = "https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction; 
-        //"http://192.168.0.21:3000/tan/ecn/"+direction; 
+    checkTanSchedule(direction) {
+        var searchUrl = BackendAdress()+"tan/ecn/"+direction;
+        //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
         //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
         console.log('Getting tan for '+searchUrl);
         var menu = fetch(searchUrl).then(res => res.json()
@@ -43,7 +42,6 @@ class HoraireTAN extends Component {
 
 
     render() {
-        const thisData = this.state.html;
         const styles = StyleSheet.create({
             text: {
                 fontSize: 20,
@@ -65,7 +63,7 @@ class HoraireTAN extends Component {
                 prochainPassage2: [""],
                 direction: 1
             });
-            this.checkMenu(1);
+            this.checkTanSchedule(1);
         };
         const dirOrvault = () => {
             this.setState({
@@ -73,11 +71,13 @@ class HoraireTAN extends Component {
                 prochainPassage2: [""],
                 direction: 2
             });
-            this.checkMenu(2);
+            this.checkTanSchedule(2);
         };
 
+        console.log(this.props);
+        console.log(this.state);
+
         return <Background>
-        <Header>Horaires station Ecole Centrale </Header>
             <Button mode={this.state.direction === 1 ? "contained" : "outlined"} onPress={dirPontRousseau}>
                 Vers Gare de Pont Rousseau
             </Button>
@@ -92,7 +92,7 @@ class HoraireTAN extends Component {
     }
 
     componentDidMount() {
-        this.checkMenu(1);
+        this.checkTanSchedule(1);
     }
 }
 export default HoraireTAN;

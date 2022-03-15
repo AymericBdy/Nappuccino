@@ -4,6 +4,7 @@ import { Text } from 'react-native-paper'
 import Header from '../components/Header'
 import RenderHtml from 'react-native-render-html';
 import { useWindowDimensions, View, StyleSheet } from 'react-native';
+import BackendAdress from '../helpers/Backend';
 
 class MenuRU extends Component {
     state = {
@@ -11,7 +12,7 @@ class MenuRU extends Component {
     }
 
     checkMenu() {
-        var searchUrl = `https://www.crous-nantes.fr/restaurant/resto-u-le-tertre/`;
+        var searchUrl = BackendAdress()+"ru/menu";
         var menu = fetch(searchUrl
         ).then(res => res.text()
         ).then(res => res.match("<div><h4>Déjeuner(.)*</li></ul></div></div></div>")[0]
@@ -52,7 +53,6 @@ class MenuRU extends Component {
         // console.log('render menu ru')
         // console.log(this.state)
         return <View>
-            <Header>Au menu ce midi</Header>
             <RenderHtml
                 contentWidth={100}
                 source={this.state}

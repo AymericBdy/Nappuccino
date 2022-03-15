@@ -23,10 +23,13 @@ app.use('/ru', require('./routes/ru.route'));
 
 app.use('/tan', require('./routes/tan.route'));
 
-//Examples :
-app.get('/notfound', (req, res) => {
-  res.status(404).send("Not found")
-})
+app.use('/cafet', require('./routes/cafet.route'));
+
+// to be removed ?
+// //Examples :
+// app.get('/notfound', (req, res) => {
+//   res.status(404).send("Not found")
+// })
 
 app.get('/authtest', function (req, res) {
   logger.logInfo("Testing authentication", req.ip);
@@ -52,3 +55,7 @@ https.createServer(
 ).listen(port, () => {
   logger.logInfo(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
 });
+
+/*app.listen(port, () => {
+  logger.logInfo(`Nappucinno back-end listening at http://valentin.molina.pro:${port}`)
+})*/
