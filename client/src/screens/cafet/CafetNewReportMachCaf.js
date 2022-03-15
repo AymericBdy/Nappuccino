@@ -36,13 +36,15 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
 
       const comment = text ? text : '';
 
+      const body = JSON.stringify({
+        machine_id: route.params.id,
+        report_type: pb,
+        comment: comment,
+      });
+      console.log("Send pb ",body);
       fetch(searchUrl, {
         method: 'post',
-        body: {
-          machine_id: route.params.id,
-          report_type: pb,
-          comment: comment,
-        }
+        body: body,
       }).then(res => res.json()
       ).then(responseJson => {
           navigation.goBack();

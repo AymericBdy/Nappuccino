@@ -58,7 +58,6 @@ class CafetNewReport extends Component {
     render() {
         const items = this.state.selector_items;
         const onChange = (value, index) => {
-            console.log("Setting state change on");
             this.setState({
                 ...this.state,
                 selected_value: value,
@@ -73,7 +72,7 @@ class CafetNewReport extends Component {
             >
             <Picker.Item label="Sélectionnez le problème" value="Unknown" />
             {items.map((item, index) => {
-                return (<Picker.Item label={item} value={index} key={index}/>) 
+                return (<Picker.Item label={item} value={item} key={index}/>) 
             })}
         </Picker>
     }
