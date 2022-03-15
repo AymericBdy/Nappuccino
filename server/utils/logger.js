@@ -1,3 +1,6 @@
+const fs = require('fs');
+const logs = "logs/server.log";
+
 function log(type, text, ip, user, priviledge) {
     textLine = cut(text, 40)
 
@@ -16,22 +19,22 @@ function log(type, text, ip, user, priviledge) {
     for(const i in textLine) {
         switch(type) {
             case 'DEBUG' :
-                console.log("\x1b[0m\x1b[1m", "[DEBUG] "+textLine[i]);
+                logAndSaveLog("\x1b[0m\x1b[1m", "[DEBUG] "+textLine[i]);
                 break;
             case 'INFO' :
-                console.log("\x1b[0m", "[INFO]  "+textLine[i]);
+                logAndSaveLog("\x1b[0m\x1b[32m", "[INFO]  "+textLine[i]);
                 break;
             case 'WARN' :
-                console.log("\x1b[0m\x1b[33m", "[WARN]  "+textLine[i]);
+                llogAndSaveLogog("\x1b[0m\x1b[33m", "[WARN]  "+textLine[i]);
                 break;
             case 'ERROR' :
-                console.log("\x1b[0m\x1b[31m", "[ERROR] "+textLine[i]);
+                logAndSaveLog("\x1b[0m\x1b[31m", "[ERROR] "+textLine[i]);
                 break;
             case 'FATAL' :
-                console.log("\x1b[0m\x1b[31m\x1b[1m", "[FATAL] "+textLine[i]);
+                logAndSaveLog("\x1b[0m\x1b[31m\x1b[1m", "[FATAL] "+textLine[i]);
                 break;
             default :
-                console.log("\x1b[0m", "[UNKNOWN] "+textLine[i]);
+                logAndSaveLog("\x1b[0m", "[UNKNOWN] "+textLine[i]);
         }
     }
 }
@@ -65,6 +68,18 @@ function cut(str, len) {
         indexSpace -- ;
     }
     return [str.substr(0, indexSpace)+" ".repeat(len-indexSpace)+" |"].concat(cut(str.substr(indexSpace+1, str.length), len));
+}
+
+function logAndSaveLog(color, str) {
+    dateStr = "["+(new Date(Date.now())).toUTCString() + "] "
+    str = dateStr + str ;
+    console.log(color, str);
+    fs.appendFile(logs, str + "\n", (err) => {
+        if(err) {
+            console.log("\x1b[0m\x1b[31m\x1b[1m", dateStr + "[FATAL] Error: unable to write to log file.");
+            console.log("\x1b[0m\x1b[31m\x1b[1m", dateStr + "[FATAL] " + err);
+        }
+    });
 }
 
 module.exports = {
