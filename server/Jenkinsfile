@@ -31,7 +31,7 @@ pipeline {
         stage("run") {
             steps {
                 sh """
-                    docker run --rm -p 3000:3000 -v Nappuccino/server/logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino
+                    docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -d --name nappuccino-app  nappuccinoc
                 """
             }
         }
