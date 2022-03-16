@@ -40,7 +40,9 @@ fetchBackend("authtest", {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-  }).then(result => result.json());
+  }).then(result => {
+    console.log("Result is ",result);
+    return result.json()});
 
 const timeout = (ms, promise) => {
     return new Promise(function(resolve, reject) {

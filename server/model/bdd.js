@@ -64,8 +64,14 @@ async function getDispensers(callback) {
     callback);
 }
 
-async function getDispenserInfos(machineId) {
-  //TODO
+async function getDispenserInfos(machineId, callback) {
+  query(
+    'SELECT * FROM public.report_dispenser WHERE dispenser_id=$1 AND display=TRUE ORDER BY date DESC;',
+    [machineId],
+    (error, rows) => {
+      logger.logInfo(rows);
+      callback(error, rows);
+    });
 }
 
 async function updateDispenserStatus(status,dispenser_id){
@@ -114,17 +120,17 @@ async function getDisplayedReports(callback){
     [],
     (error, rows) => {
       logger.logInfo(rows);
-      callback(rows);
+      callback(error, rows);
     });
 }
 
 async function getReportVotes(report_id, callback){
   query(
-    'SELECT * FROM public.votes WHERE report_id=$1;',
+    'SELECT * FROM public.votes WHERE report_dispenser_id=$1;',
     [report_id],
     (error, rows) => {
       logger.logInfo(rows);
-      callback(rows);
+      callback(error, rows);
     });
 }
 
@@ -232,4 +238,6 @@ module.exports = {
   getDispensers,
   updateReliability,
   addDispenserReport,
+  getDispenserInfos,
+  getReportVotes,
 }
