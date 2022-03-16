@@ -3,18 +3,18 @@ pipeline {
     stages {
         stage("clean") {
             steps {
-                sh """
+                sh '''
                     echo "Removing old files..."
                     rm -r * || exit 0
                     echo "Stoping old files..."
                     docker stop nappuccino-app || exit 0 
                     echo "Clean up done."
-                """
+                '''
             }
         }
         stage("build") {
             steps {
-                sh """
+                sh '''
                     git clone https://github.com/AymericBdy/Nappuccino
                     cd Nappuccino/server
                     mkdir certs || exit 0
@@ -31,24 +31,24 @@ pipeline {
                     build_counter=$((build_counter+1))
                     echo ${build_counter} >> /home/jenkins/Nappuccino-data/build_counter
                     echo "Build done."
-                """
+                '''
             }
         }
         stage("run") {
             steps {
-                sh """
+                sh '''
                     build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
                     build_counter=$((build_counter-1))
                     version="0.0.${build_counter}"
                     docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino:version
-                """
+                '''
             }
         }
         stage("test") {
             steps {
-                sh """
+                sh '''
                     docker logs nappuccino-app
-                """
+                '''
             }
         }
     }
