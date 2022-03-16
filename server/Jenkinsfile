@@ -24,8 +24,8 @@ pipeline {
                     cp /home/jenkins/Nappuccino-data/bdd.json properties/bdd.json
                     mkdir logs || exit 0
                     build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
-                    version="0.0."$build_counter
-                    echo "Building version "$version" ..."
+                    version="0.0.$build_counter"
+                    echo "Building version $version ..."
                     git checkout backend
                     docker build . -t nappuccino:version
                     build_counter=$((build_counter+1))
@@ -39,7 +39,7 @@ pipeline {
                 sh """
                     build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
                     build_counter=$((build_counter-1))
-                    version="0.0."$build_counter
+                    version="0.0.$build_counter"
                     docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino:version
                 """
             }
