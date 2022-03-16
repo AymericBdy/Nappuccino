@@ -71,3 +71,6 @@ buck-out/
 
 # ssl certificates :
 /server/certs/*
+
+# server logs :
+/server/logs/*
