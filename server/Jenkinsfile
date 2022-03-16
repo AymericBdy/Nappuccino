@@ -27,9 +27,9 @@ pipeline {
                     version="0.0.${build_counter}"
                     echo "Building version ${version} ..."
                     git checkout backend
-                    docker build . -t nappuccino:version
+                    docker build . -t nappuccino:${version}
                     build_counter=$((build_counter+1))
-                    echo ${build_counter} >> /home/jenkins/Nappuccino-data/build_counter
+                    echo ${build_counter} > /home/jenkins/Nappuccino-data/build_counter
                     echo "Build done."
                 '''
             }
@@ -40,7 +40,7 @@ pipeline {
                     build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
                     build_counter=$((build_counter-1))
                     version="0.0.${build_counter}"
-                    docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino:version
+                    docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino:${version}
                 '''
             }
         }
