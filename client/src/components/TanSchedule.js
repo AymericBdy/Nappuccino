@@ -7,7 +7,7 @@ import Background from './Background';
 import Header from './Header'
 import Button from './Button'
 import { theme } from '../core/theme'
-import BackendAdress from '../helpers/Backend';
+import { fetchBackend } from '../helpers/Backend';
 
 class HoraireTAN extends Component {
     state = {
@@ -17,11 +17,11 @@ class HoraireTAN extends Component {
     }
 
     checkTanSchedule(direction) {
-        var searchUrl = BackendAdress()+"tan/ecn/"+direction;
+        var searchUrl = "tan/ecn/"+direction;
         //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
         //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
         console.log('Getting tan for '+searchUrl);
-        var menu = fetch(searchUrl).then(res => res.json()
+        var menu = fetchBackend(searchUrl).then(res => res.json()
         ).then(responseJson => responseJson.prochainsHoraires
         ).then(responseJson => {
             this.setState({

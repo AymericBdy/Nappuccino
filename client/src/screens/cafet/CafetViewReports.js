@@ -17,7 +17,7 @@ export default function CafetViewReports({ route, navigation }) {
         flex:1,
         margin: 10
       }}>
-          <CafetMachineInfos machine_id={route.params.id} type_machine={route.params.type}></CafetMachineInfos>
+        <CafetMachineInfos machine_id={route.params.id} type_machine={route.params.type}></CafetMachineInfos>
 
         <FAB
           style={{
@@ -30,9 +30,9 @@ export default function CafetViewReports({ route, navigation }) {
           icon="plus"
           onPress={() => {
             if(route.params.type == "cafe")
-              navigation.navigate("CafetNewReportMachCaf", {id: route.params.id})
+              navigation.navigate("CafetNewReportMachCaf", {id: route.params.id, type: route.params.type})
             else if(route.params.type == "distrib")
-              navigation.navigate("CafetNewReportDistrib", {id: route.params.id})
+              navigation.navigate("CafetNewReportDistrib", {id: route.params.id, type: route.params.type})
           }}
         />
       </View >

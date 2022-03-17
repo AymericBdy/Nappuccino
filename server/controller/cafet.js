@@ -21,7 +21,68 @@ exports.list_machines = async (req, res) => {
 
 exports.infos_machine = async (req, res) => {
     //TODO GET MACHINE INFOS
-    res.status(200).send({
+    const prom = new Promise((resolve, reject) => {
+        bdd.getDispenserInfos(req.params.machine_id, (error, result) => {
+            if(error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+    prom.then(result => {
+        var promiseArray = [];
+    
+        result.map((value, index) => {
+            promiseArray.push(new Promise((resolve, reject) => {
+                bdd.getReportVotes(value.report_dispenser_id, (error, result) => {
+                    console.log("Result of "+index+" is ",result);
+                    if (error) reject(error);
+                    else resolve({
+                        type: value.type,
+                        comment: value.comment,
+                        date: value.date,
+                        reliability: value.reliability,
+                        upvotes: result.filter(v => v.vote_type).length,
+                        downvotes: result.filter(v => !v.vote_type).length,
+                        //TODO USE THE CONNECTED USER IF THERE IS ONE
+                        user_vote: result.filter(v => v.login_ecn === 'abourdy2020').length > 0 ? 
+                        (result.filter(v => v.login_ecn === 'abourdy2020')[0].vote_type ? 1 : -1) : 0,
+                    });
+                });
+            }));
+        });
+        Promise.all(promiseArray).then(result => {
+            console.log("Final result is ",result);
+            res.status(200).send({
+                machines: result
+            });
+        }).catch(error => {
+            res.status(500).send({
+                result: "Erreur de base de données (step 2)",
+                error: error,
+            });
+        });
+    }).catch(error => {
+        res.status(500).send({
+            result: "Erreur de base de données (step 1)",
+            error: error,
+        });
+    });
+    /*bdd.getReportVotes(req.params.machine_id, (error, result) => {
+        if(error) {
+            res.status(500).send({
+                result: "Erreur de base de données (step 1)",
+                error: error,
+            });
+        } else {
+
+            res.status(200).send({
+                machines: result
+            });
+        }
+    });*/
+    /*res.status(200).send({
 	    machine_id: req.params.machine_id,
         name: 'Machine à café sas',
         reports: [{
@@ -42,8 +103,7 @@ exports.infos_machine = async (req, res) => {
             date: 1647013789,
             reliability: 40,
         }],
-
-    })
+    })*/
 }
 
 exports.vote_report = async (req, res) => {
