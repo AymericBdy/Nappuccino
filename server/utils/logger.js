@@ -1,8 +1,13 @@
 const fs = require('fs');
 const logs = "logs/server.log";
 
+var version = process.env.NAPPUCCINO_VERSION;
+if( typeof version === 'undefined' ) {
+    version="0.0.0";
+}
+
 function log(type, text, ip, user, priviledge) {
-    textLine = cut(text, 40)
+    textLine = cut(text, 50)
 
     if( typeof ip !== 'undefined' ) {
         textLine[0] = textLine[0] + " IP : "+ip+" |";
@@ -16,6 +21,8 @@ function log(type, text, ip, user, priviledge) {
         textLine[0] = textLine[0] + " PRIVILEDGE : "+priviledge+" |";
     }
 
+    textLine[0] = textLine[0] + " VERSION : "+version+" |";
+
     for(const i in textLine) {
         switch(type) {
             case 'DEBUG' :
@@ -25,7 +32,7 @@ function log(type, text, ip, user, priviledge) {
                 logAndSaveLog("\x1b[0m\x1b[32m", "[INFO]  "+textLine[i]);
                 break;
             case 'WARN' :
-                llogAndSaveLogog("\x1b[0m\x1b[33m", "[WARN]  "+textLine[i]);
+                logAndSaveLog("\x1b[0m\x1b[33m", "[WARN]  "+textLine[i]);
                 break;
             case 'ERROR' :
                 logAndSaveLog("\x1b[0m\x1b[31m", "[ERROR] "+textLine[i]);
