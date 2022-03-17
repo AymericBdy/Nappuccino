@@ -53,9 +53,9 @@ https.createServer(
   },
   app
 ).listen(port, () => {
-  logger.logInfo(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
+  logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro");
 });
 
 /*app.listen(port, () => {
-  logger.logInfo(`Nappucinno back-end listening at http://valentin.molina.pro:${port}`)
+  logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro")
 })*/
