@@ -6,21 +6,26 @@ import Paragraph from '../components/Paragraph'
 import Button from '../components/Button'
 import MenuRU from '../components/MenuRU'
 import HoraireTAN from '../components/TanSchedule'
+import ButtonImage from '../components/ButtonImage'
 import { ScrollView } from 'react-native'
+import { Image, StyleSheet } from 'react-native'
+import Text from 'react-native'
+
 
 
 export default function Dashboard({ navigation, loggedIn }) {
   return (
     <Background>
       <ScrollView>
-        <Button mode="contained"
-          onPress={() => navigation.navigate("RuScreen")}>
-          Menu RU
-        </Button>
-        <Button mode="contained"
-          onPress={() => navigation.navigate("TanScreen")}>
-          Horaires tan
-        </Button>
+        <ButtonImage mode="contained" source={require('../assets/cappuccino-1.png')}
+          onPress={() => navigation.navigate("RuScreen")} text ="RESTAURANT UNIVERSITAIRE">
+        </ButtonImage>
+        <ButtonImage mode="contained" source={require('../assets/cappuccino-1.png')}
+          onPress={() => navigation.navigate("TanScreen")} text ="HORAIRES TAN">
+        </ButtonImage>
+        <ButtonImage mode="contained" source={require('../assets/cappuccino-1.png')}
+          onPress={() => navigation.navigate("MapScreen")} text ="PLAN DU CAMPUS">
+        </ButtonImage>
         <Header>Let’s start</Header>
         <Paragraph>
           Your amazing app starts here. Open you favorite code editor and start
