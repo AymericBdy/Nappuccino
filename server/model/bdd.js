@@ -245,4 +245,5 @@ module.exports = {
   addDispenserReport,
   getDispenserInfos,
   getReportVotes,
+  getDisplayedReports,
 }
