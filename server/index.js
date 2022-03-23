@@ -16,9 +16,9 @@ app.use(express.static('public'))
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-  res.send('Nappucinno application back-end')
-  logger.logInfo("Connection from : ", req.ip)
-})
+  res.send('Nappucinno application back-end');
+  logger.logInfo("GET /");
+});
 
 app.use('/ru', require('./routes/ru.route'));
 
