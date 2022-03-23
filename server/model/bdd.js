@@ -3,7 +3,7 @@ const fs = require('fs');
 const logger = require('../utils/logger.js');
 const { nextTick } = require('process');
 const moment = require('moment');
-const e = require('express');
+const express = require('express');
 
 // Connection to database
 const logInfo = JSON.parse(fs.readFileSync('properties/bdd.json', 'utf8'));
@@ -14,7 +14,8 @@ const pool = new Pool(logInfo);
 async function query(query, params, callback) {
   pool.query(query, params, (err, result) => {
     if(err) {
-      logger.logFatal("Can't execute the desired query.");
+      logger.logFatal("Can't execute the desired query : ");
+      logger.logFatal(query);
       logger.logFatal("Error is : "+err);
       // Aymeric :  makes crashing logger.logFatal("Error stack is : "+err.stack);
       callback(err, []);
@@ -61,7 +62,9 @@ async function getDispensers(callback) {
   query(
     'SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;',
     [],
-    callback);
+    (error, rows) => {
+      callback(error, rows);
+    });
 }
 
 async function getDispenserInfos(machineId, callback) {
@@ -69,10 +72,10 @@ async function getDispenserInfos(machineId, callback) {
     'SELECT * FROM public.report_dispenser WHERE dispenser_id=$1 AND display=TRUE ORDER BY date DESC;',
     [machineId],
     (error, rows) => {
-      logger.logInfo(rows);
       callback(error, rows);
     });
 }
+
 
 async function updateDispenserStatus(status,dispenser_id){
   query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
@@ -165,6 +168,26 @@ async function updateReportReliability(report_id, reliability){
   );
 }
 
+async function updateAllDispensersStatus(){
+  getDispensers((error,dispensers) => {
+    for(let i = 0; i<dispensers.length; i+=1){
+      
+      const disp = dispensers[i];
+
+      //for each dispenser, getting all active reports
+      getDispenserInfos(disp['dispenser_id'], (error,reports) => {
+
+        if(reports.length > 0){
+          updateDispenserStatus('issue', disp['dispenser_id'])
+        } else {
+          updateDispenserStatus('ok', disp['dispenser_id'])
+        }
+
+      });
+    }
+  });
+}
+
 async function updateReliability(){
 
   // constants for reliability calculation
@@ -175,15 +198,16 @@ async function updateReliability(){
   let hours = 0;
 
   // Get all displayed reports to update
-  getDisplayedReports((rows) => {
+  getDisplayedReports((error,rows) => {
     for(let i = 0; i<rows.length; i+=1){
-
-      let report = rows[i];
-      let upvotes = 0;
-      let downvotes = 0;
+    
+      const report = rows[i];      
 
       //for each report we get the votes
-      getReportVotes(report['report_dispenser_id'], votes => {
+      getReportVotes(report['report_dispenser_id'], (error, votes) => {
+        
+        let upvotes = 0;
+        let downvotes = 0;
 
         for(let j =0; j<votes.length; j+=1){
           if(votes[j]['vote_type']){
@@ -191,25 +215,28 @@ async function updateReliability(){
           }else{
             downvotes+=1;
           }
-        }      
+        }
+        // Obtaining number of hours since the creation of the report
+        let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
+        let end_date = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
+        
+        let duration = moment.duration(end_date.diff(start_date));
+        hours = duration.asDays()*24; 
+
+        // Computing reliability
+        let reliability = Math.min(100, Math.max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
+        // Update reliability of the report being treated
+
+        updateReportReliability(report['report_dispenser_id'], Math.floor(reliability));
       });
 
-      // Obtaining number of hours since the creation of the report
-      let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
-      let end_date = moment(new Date().getTime(), 'YYYY-MM-DD HH:mm:ss');
-      
-      let duration = moment.duration(end_date.diff(start_date));
-      hours = duration.asDays()*24; 
 
-      // Computing reliability
-      let reliability = min(100, max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
-      // Update reliability of the report being treated
-      updateReportReliability(report['report_dispenser_id'], reliability);
     }
   });
   // Update the display attributes of reports to not display unreliable report
   updateReportsDisplay();
+  updateAllDispensersStatus();
 }
 
 

@@ -40,7 +40,7 @@ pipeline {
                     build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
                     build_counter=$((build_counter-1))
                     version="0.0.${build_counter}"
-                    docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -d --name nappuccino-app  nappuccino:${version}
+                    docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -e NAPPUCCINO_VERSION=${version} -d --name nappuccino-app  nappuccino:${version}
                 '''
             }
         }
