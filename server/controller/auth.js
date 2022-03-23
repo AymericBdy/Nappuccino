@@ -10,9 +10,6 @@ exports.validatetoken = function(req, res, next) {
         const jwt = require('jsonwebtoken')
         try{
             const payload = jwt.verify(token, jwtSecretKey);
-            /*console.log("You are in");
-            console.log(payload.data);
-            console.log(payload.audience);*/
             next(); //Continue with the request processing
         } catch(error) {
             //console.error(error.message);
@@ -40,24 +37,14 @@ exports.signin = function(req , res) {
     authLdap(ecnUser, ecnPwd, (validCredentials) => {
         if(validCredentials){
             var data = {user: ecnUser};//to do : add the priviledge into the token's data
-            logger.logInfo("Generating token with data : " + data);
+            logger.logInfo("Generating token with data : " + JSON.stringify(data));
             
             bdd.testAndAddEcnUser(ecnUser);
 
             var now = Math.floor(Date.now() / 1000),
-                iat = (now - 10),
-                expiresIn = 3600,
-                expr = (now + expiresIn),
-                notBefore = (now - 10),
-                jwtId = Math.random().toString(36).substring(7);
-            var payload = {
-                iat: iat,
-                jwtid : jwtId,
-                audience : 'TEST',
-                data : data
-            };	
+                expiresIn = 3600;
                 
-            jwt.sign(payload, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
+            jwt.sign(data, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 res.header();
                 if(err){
                     logger.logError('An error occurred while generating token');
