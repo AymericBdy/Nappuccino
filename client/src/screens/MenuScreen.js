@@ -40,6 +40,10 @@ export default function Menu({ navigation, loggedIn }) {
         onPress={() => navigation.replace("AnnuaireScreen")}>
           ANNUAIRE DU PERSONNEL
         </Button>
+        <Button mode="outlined"
+        onPress={() => navigation.replace("SignalementScreen")}>
+          UN PROBLEME ?
+        </Button>
         <Button
           mode="outlined"
           onPress={() => {

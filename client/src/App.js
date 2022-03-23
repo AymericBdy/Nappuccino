@@ -18,6 +18,7 @@ import {
     CafetNewReportMachCaf,
     CafetNewReportDistrib,
     CafetViewReports,
+    SignalementScreen,
 } from './screens'
 import MenuButton from './components/MenuButton'
 import BackButton from './components/BackButton'
@@ -172,6 +173,17 @@ export default function App() {
                     <Stack.Screen name="RuScreen" component={RuScreen} 
                     options={{  
                         title: 'Au menu ce midi', //Set Header Title
+                        headerStyle: {
+                            backgroundColor: theme.colors.surface, //Set Header color
+                        },
+                        headerTintColor: theme.colors.primary, //Set Header text color
+                        headerTitleStyle: {
+                            fontWeight: 'bold', //Set Header text style
+                        },
+                    }}/>
+                    <Stack.Screen name="SignalementScreen" component={SignalementScreen} 
+                    options={{  
+                        title: 'Un problème ?', //Set Header Title
                         headerStyle: {
                             backgroundColor: theme.colors.surface, //Set Header color
                         },

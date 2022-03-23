@@ -20,7 +20,7 @@ const ACCESS_TOKEN_KEY = 'access_token';
  */
 const loginUser = (id, password) =>
   fetchBackend('signin', {
-    method: 'POST',
+    method: 'post',
     body: {
       id: id,
       password: password,
@@ -33,16 +33,13 @@ const loginUser = (id, password) =>
  * @returns Le résultat de la requète de validation du token
  */
 const refreshToken = token =>
-fetchBackend("authtest", {
+  fetchBackend("authtest", {
     method: 'GET',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-  }).then(result => {
-    console.log("Result is ",result);
-    return result.json()});
+  }).then(result => result.json());
 
 const timeout = (ms, promise) => {
     return new Promise(function(resolve, reject) {
@@ -97,7 +94,7 @@ export const AuthContainer = (props) => {
           //Connexion au ldap et vérification des identifiants
           const result = await loginUser(id, password);
 
-          console.log(`result`, result);
+          console.log('result', result);
           
           //Si ça a marché
           if(result.authenticated) {
@@ -141,7 +138,7 @@ export const AuthContainer = (props) => {
 
           await timeout(1000, refreshToken(token));
 
-          dispatch({type: AUTHENTICATED, token: result.token});
+          dispatch({type: AUTHENTICATED, token: token});
         } catch (error) {
           ToastAndroid.showWithGravity(
             "Erreur lors de la connexion, réessayez plus tard...",

@@ -1,38 +1,25 @@
 import React, { useState } from "react"
-import Background from '../../components/Background'
+import Background from '../components/Background'
 import { View, ScrollView, Text, StyleSheet, TextInput } from 'react-native'
-import BackButton from '../../components/BackButton'
-import Button from '../../components/Button'
-import Logo from '../../components/Logo'
-import Header from '../../components/Header'
-import Paragraph from "../../components/Paragraph"
-import { Picker } from "@react-native-picker/picker"
-import { theme } from '../../core/theme'
-import {Backend, fetchBackend} from '../../helpers/Backend';
-import CafetNewReport from '../../components/CafetNewReport'
-import {AuthContext, useAuth} from '../../helpers/Auth';
+import Button from '../components/Button'
+import Header from '../components/Header'
+import Paragraph from "../components/Paragraph"
+import { theme } from '../core/theme'
+import {Backend, fetchBackend} from '../helpers/Backend';
+import CafetNewReport from '../components/CafetNewReport'
+import {AuthContext, useAuth} from '../helpers/Auth';
 import {
   ToastAndroid,
 } from "react-native";
 
 
-export default function CafetNewReportMachCaf({ route, navigation }) {
-    const [pb, setPb] = useState('Unknown');
+export default function SignalementScreen({ route, navigation }) {
     const [text, onChangeText] = useState(null);
 
     const auth = useAuth();
   
-/*console.log("Infos are ",route.params.infos_view);*/
-    
   const validateReport = () => {
-    if(pb === "Unknown") {
-      //METTRE EN ROUGE
-          ToastAndroid.showWithGravity(
-            "Faut sélectionner un truc là...",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
-    } else if(auth.authState.accessToken == null) {
+    if(auth.authState.accessToken == null && false) {
       ToastAndroid.showWithGravity(
         "Vous devez être connecté",
         ToastAndroid.SHORT,
@@ -41,34 +28,28 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
     }
     else {
       console.log("will do it");
-      var searchUrl = "cafet/machine/newreport";
+      var searchUrl = "cafet/machine/newreport"; // TODO changer l'url
 
       console.log('Sending report to '+searchUrl);
-      console.log('Id is '+route.params.id);
+      //console.log('Id is '+route.params.id);
 
       const comment = text ? text : '';
 
       fetchBackend(searchUrl, {
         method: 'post',
         body: {
-          machine_id: route.params.id,
-          report_type: pb,
           comment: comment,
         }
       }, auth).then(res => res.json()
       ).then(responseJson => {
           navigation.goBack();
-          if(route.params.infos_view) {
-            console.log("Call callback");
-            route.params.infos_view.goBack();
-          }
           ToastAndroid.showWithGravity(
             "Signalement envoyé !",
             ToastAndroid.SHORT,
             ToastAndroid.BOTTOM
           );
       }).catch(error => {
-          console.log("Erreur pour envoyer un report sur la machine "+route.params.id, error);
+          console.log("Erreur pour envoyer un report sur notre appli "+route.params.id, error);
           ToastAndroid.showWithGravity(
             "Erreur",
             ToastAndroid.SHORT,
@@ -82,12 +63,6 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
       <Background>
       <View>
         <Header>Quel est le problème ?</Header>
-        <CafetNewReport machine_id={route.params.id} type_machine={route.params.type}
-          selectedValue={pb} onValueChange={(value, index) => setPb(value)}>
-        </CafetNewReport>
-        <Paragraph>
-          Un commentaire à ajouter ?
-        </Paragraph>
         <TextInput
           placeholder={'Commentaires'}
           multiline
