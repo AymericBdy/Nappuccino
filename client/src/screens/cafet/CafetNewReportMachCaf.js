@@ -22,6 +22,8 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
 
     const auth = useAuth();
   
+/*console.log("Infos are ",route.params.infos_view);*/
+    
   const validateReport = () => {
     if(pb === "Unknown") {
       //METTRE EN ROUGE
@@ -30,7 +32,7 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
             ToastAndroid.SHORT,
             ToastAndroid.BOTTOM
           );
-    } else if(auth.authState.accessToken == null && false) {
+    } else if(auth.authState.accessToken == null) {
       ToastAndroid.showWithGravity(
         "Vous devez être connecté",
         ToastAndroid.SHORT,
@@ -56,6 +58,10 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
       }, auth).then(res => res.json()
       ).then(responseJson => {
           navigation.goBack();
+          if(route.params.infos_view) {
+            console.log("Call callback");
+            route.params.infos_view.goBack();
+          }
           ToastAndroid.showWithGravity(
             "Signalement envoyé !",
             ToastAndroid.SHORT,

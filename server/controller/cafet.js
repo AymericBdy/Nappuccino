@@ -20,7 +20,7 @@ exports.list_machines = async (req, res) => {
 }
 
 exports.infos_machine = async (req, res) => {
-    //TODO GET MACHINE INFOS
+    console.log("get infos for machine ",req.params.machine_id);
     const prom = new Promise((resolve, reject) => {
         bdd.getDispenserInfos(req.params.machine_id, (error, result) => {
             if(error) {
@@ -107,9 +107,21 @@ exports.infos_machine = async (req, res) => {
 }
 
 exports.vote_report = async (req, res) => {
-    //TODO DO VOTE
+    const report_id = req.body.report_id;
+    const upvote = req.body.upvote;
 
-    this.infos_machine(req, res);
+    //TODO GET FROM AUTH TOKEN !!!
+    bdd.addVoteDispenserReport(upvote, report_id, 'nap_test_user', (error) => {
+        if(error) {
+            res.status(500).send({
+                result: "Impossible d'ajouter le vote",
+                error: error,
+            });
+        } else {
+            req.params.machine_id = req.body.machine_id;
+            this.infos_machine(req, res);
+        }
+    });
 }
 
 exports.new_report = async (req, res) => {
@@ -122,30 +134,78 @@ exports.new_report = async (req, res) => {
 
     console.log("putting "+machine_id+" "+report_type+" "+comment);
 
-    await bdd.addDispenserReport("NOW()", report_type, comment, machine_id, user,
-        (error) => {
-            if(error) {
+    bdd.getDispenserReport(machine_id, report_type, (error, result) => {
+        if(error) {
             res.status(500).send({
-                result: "Erreur de base de données",
+                result: "Erreur de base de données (1)",
                 error: error,
             });
+        } else {
+            console.log("Result is ",result);
+            console.log("Result ?",(result.length === 0));
+            if(result.length === 0) {
+                bdd.addDispenserReport("NOW()", report_type, comment, machine_id, user,
+                (error) => {
+                    if(error) {
+                        res.status(500).send({
+                            result: "Erreur de base de données (2)",
+                            error: error,
+                        });
+                    } else {
+                        res.status(200).send({
+                            result: "success"
+                        });
+                    }
+                });
             } else {
-            res.status(200).send({
-                result: "success"
-            });
+                res.status(200).send({
+                    result: "duplicated"
+                });
             }
-        });
+        }
+    });
+}
+exports.report_list_old = async (req, res) => {
+    res.status(200).send({
+        items: ["Mettez à jour l'application"]
+    });
 }
 
 exports.report_list = async (req, res) => {
     //TODO GET FROM THE BDD
 
     if(req.params.type === 'cafe') {
-        res.status(200).send({
-            items: ["Paiement sans contact impossible", "Pas de gobelets", "Pas de sucre", "Expresso", "Expresso allongé", 
-            "Expresso crème", "Expresso crème allongé", "Ristretto", "Café soluble décaféiné", "Café soluble au lait", 
-            "Cappuccino", "Cappuccino noisette", "Cappuccino à la française", "Latte", "Boisson au cacao", "Viennois au cacao",
-            "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"]
+        bdd.getDispenserInfos(req.params.machine_id, (error, result) => {
+            if(error) {
+                res.status(500).send({
+                    result: "Erreur de base de données",
+                    error: error,
+                });
+            } else {
+                //filter the elements that are not yet reported
+
+                const itemList = ["Paiement sans contact impossible", "Pas de gobelets", "Pas de sucre", "Expresso", "Expresso allongé", 
+                "Expresso crème", "Expresso crème allongé", "Ristretto", "Café soluble décaféiné", "Café soluble au lait", 
+                "Cappuccino", "Cappuccino noisette", "Cappuccino à la française", "Latte", "Boisson au cacao", "Viennois au cacao",
+                "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"];
+
+                //console.log("Building from ",result);
+
+                const availableItems = [];
+                itemList.map((value, index) => {
+                    if(!(!!result.find(report => {
+                        return report.type === value;
+                    }))) {
+                        availableItems.push(value);
+                    }
+                });
+
+                //console.log("Built item list ",availableItems);
+
+                res.status(200).send({
+                    items: availableItems
+                });
+            }
         });
     } else if(req.params.type === 'distrib') {
         res.status(200).send({

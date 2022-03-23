@@ -86,6 +86,16 @@ async function addDispenser(dispenser_type){
   );
 }
 
+async function getDispenserReport(machineId, report_type, callback) {
+  query(
+    'SELECT * FROM public.report_dispenser WHERE dispenser_id=$1 AND display=TRUE AND type=$2;',
+    [machineId, report_type],
+    (error, rows) => {
+      logger.logInfo(rows);
+      callback(error, rows);
+    });
+}
+
 //Tested and working
 async function addDispenserReport(date, report_type, comment, dispenser_id, login_ecn, callback){
   query('INSERT INTO report_dispenser(date, type, comment, display, reliability, dispenser_id, login_ecn)'+
@@ -108,10 +118,17 @@ async function addDispenserReport(date, report_type, comment, dispenser_id, logi
     });
 }
 
-async function addVoteDispenserReport(date, vote_type, report_id, login_ecn){
+async function addVoteDispenserReport(vote_type, report_id, login_ecn, callback){
+  console.log('PArams are ',vote_type," ",report_id," ",login_ecn);
   query('INSERT INTO votes(date, vote_type, report_dispenser_id, login_ecn) VALUES($1,$2,$3,$4)',
-     [date, vote_type, report_id, login_ecn]
-  );
+     ['NOW()', vote_type, report_id, login_ecn],
+    (error, result) => {
+      if(error) {
+        callback(error);
+      } else {
+        callback(null);
+      }
+    });
 }
 
 async function getDisplayedReports(callback){
@@ -240,4 +257,6 @@ module.exports = {
   addDispenserReport,
   getDispenserInfos,
   getReportVotes,
+  getDispenserReport,
+  addVoteDispenserReport,
 }
