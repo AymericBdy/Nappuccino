@@ -3,7 +3,7 @@ const fs = require('fs');
 const logger = require('../utils/logger.js');
 const { nextTick } = require('process');
 const moment = require('moment');
-const e = require('express');
+const express = require('express');
 
 // Connection to database
 const logInfo = JSON.parse(fs.readFileSync('properties/bdd.json', 'utf8'));
@@ -14,7 +14,8 @@ const pool = new Pool(logInfo);
 async function query(query, params, callback) {
   pool.query(query, params, (err, result) => {
     if(err) {
-      logger.logFatal("Can't execute the desired query.");
+      logger.logFatal("Can't execute the desired query : ");
+      logger.logFatal(query);
       logger.logFatal("Error is : "+err);
       // Aymeric :  makes crashing logger.logFatal("Error stack is : "+err.stack);
       callback(err, []);
@@ -158,15 +159,16 @@ async function updateReliability(){
   let hours = 0;
 
   // Get all displayed reports to update
-  getDisplayedReports((rows) => {
+  getDisplayedReports((error,rows) => {
     for(let i = 0; i<rows.length; i+=1){
-
-      let report = rows[i];
-      let upvotes = 0;
-      let downvotes = 0;
+    
+      const report = rows[i];      
 
       //for each report we get the votes
-      getReportVotes(report['report_dispenser_id'], votes => {
+      getReportVotes(report['report_dispenser_id'], (error, votes) => {
+        
+        let upvotes = 0;
+        let downvotes = 0;
 
         for(let j =0; j<votes.length; j+=1){
           if(votes[j]['vote_type']){
@@ -174,25 +176,28 @@ async function updateReliability(){
           }else{
             downvotes+=1;
           }
-        }      
+        }
+        // Obtaining number of hours since the creation of the report
+        let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
+        let end_date = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
+        
+        let duration = moment.duration(end_date.diff(start_date));
+        hours = duration.asDays()*24; 
+
+        // Computing reliability
+        let reliability = Math.min(100, Math.max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
+        // Update reliability of the report being treated
+
+        updateReportReliability(report['report_dispenser_id'], reliability);
       });
 
-      // Obtaining number of hours since the creation of the report
-      let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
-      let end_date = moment(new Date().getTime(), 'YYYY-MM-DD HH:mm:ss');
-      
-      let duration = moment.duration(end_date.diff(start_date));
-      hours = duration.asDays()*24; 
 
-      // Computing reliability
-      let reliability = min(100, max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
-      // Update reliability of the report being treated
-      updateReportReliability(report['report_dispenser_id'], reliability);
     }
   });
   // Update the display attributes of reports to not display unreliable report
   updateReportsDisplay();
+  
 }
 
 
