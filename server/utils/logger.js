@@ -1,5 +1,5 @@
 const fs = require('fs');
-const logs = "logs/server.log";
+const logs = "logs/nappuccino-app.log";
 
 var version = process.env.NAPPUCCINO_VERSION;
 if( typeof version === 'undefined' ) {
