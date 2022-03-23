@@ -1,13 +1,7 @@
 {
-  "name": "map-gl-indoor",
-  "description": "A MapGL plugin to visualize multi-level buildings",
-  "version": "0.4.3",
-  "main": "dist/map-gl-indoor.umd.js",
-  "module": "dist/map-gl-indoor.es.js",
-  "types": "dist/map-gl-indoor.d.ts",
-  "files": [
-    "dist"
-  ],
+  "name": "map-indoor-nappuccino",
+  "description": "A usecase of MapGL  Indoor plugin for Nappuccino",
+  "version": "0.1",
   "private": false,
   "scripts": {
     "dev": "vite",
@@ -19,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/map-gl-indoor/map-gl-indoor.git"
+    "url": "git://github.com/AymericBdy/Nappuccino.git"
   },
   "keywords": [
     "indoor",
@@ -30,9 +24,11 @@
     "map",
     "mapbox",
     "mapboxgl",
-    "maplibre"
+    "ECN",
+	"Nappuccino",
+	"Plan"
   ],
-  "author": "Thibaud Michel",
+  "author": "Mickaël Fontès",
   "license": "MIT",
   "peerDependencies": {
     "mapbox-gl": ">1.10.0"
@@ -57,11 +53,5 @@
     "@turf/bbox": "^6.5.0",
     "@turf/destination": "^6.5.0",
     "@turf/distance": "^6.5.0"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/map-gl-indoor.es.js",
-      "require": "./dist/map-gl-indoor.umd.js"
-    }
   }
 }
