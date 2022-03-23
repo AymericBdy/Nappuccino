@@ -123,13 +123,32 @@ async function addDispenserReport(date, report_type, comment, dispenser_id, logi
 
 async function addVoteDispenserReport(vote_type, report_id, login_ecn, callback){
   console.log('PArams are ',vote_type," ",report_id," ",login_ecn);
-  query('INSERT INTO votes(date, vote_type, report_dispenser_id, login_ecn) VALUES($1,$2,$3,$4)',
-     ['NOW()', vote_type, report_id, login_ecn],
-    (error, result) => {
+  
+  query('SELECT vote_id, vote_type FROM votes WHERE login_ecn=$1 AND report_dispenser_id=$2',
+    [login_ecn, report_id], (error, result) => {
       if(error) {
         callback(error);
       } else {
-        callback(null);
+        if(result.length > 0) {
+          query('DELETE FROM votes WHERE login_ecn=$1 AND report_dispenser_id=$2;',
+          [login_ecn, report_id], (error, result) => {
+            if(error) {
+              callback(error);
+            } else {
+              callback(null);
+            }
+          });
+        } else {
+          query('INSERT INTO votes(date, vote_type, report_dispenser_id, login_ecn) VALUES($1,$2,$3,$4)',
+            ['NOW()', vote_type, report_id, login_ecn],
+            (error, result) => {
+              if(error) {
+                callback(error);
+              } else {
+                callback(null);
+              }
+          });
+        }
       }
     });
 }
@@ -139,7 +158,7 @@ async function getDisplayedReports(callback){
     'SELECT * FROM public.report_dispenser WHERE display=TRUE;',
     [],
     (error, rows) => {
-      logger.logInfo(rows);
+      //logger.logInfo(rows);
       callback(error, rows);
     });
 }
@@ -149,7 +168,6 @@ async function getReportVotes(report_id, callback){
     'SELECT * FROM public.votes WHERE report_dispenser_id=$1;',
     [report_id],
     (error, rows) => {
-      logger.logInfo(rows);
       callback(error, rows);
     });
 }
@@ -170,20 +188,25 @@ async function updateReportReliability(report_id, reliability){
 
 async function updateAllDispensersStatus(){
   getDispensers((error,dispensers) => {
-    for(let i = 0; i<dispensers.length; i+=1){
-      
-      const disp = dispensers[i];
+    if(error){
+      logger.logFatal("Error at getDispensers in updateAllDispensersStatus : "+error);
+    }else{
 
-      //for each dispenser, getting all active reports
-      getDispenserInfos(disp['dispenser_id'], (error,reports) => {
+      for(let i = 0; i<dispensers.length; i+=1){
+        
+        const disp = dispensers[i];
 
-        if(reports.length > 0){
-          updateDispenserStatus('issue', disp['dispenser_id'])
-        } else {
-          updateDispenserStatus('ok', disp['dispenser_id'])
-        }
+        //for each dispenser, getting all active reports
+        getDispenserInfos(disp['dispenser_id'], (error,reports) => {
 
-      });
+          if(reports.length > 0){
+            updateDispenserStatus('issue', disp['dispenser_id'])
+          } else {
+            updateDispenserStatus('ok', disp['dispenser_id'])
+          }
+
+        });
+      }
     }
   });
 }
@@ -199,39 +222,48 @@ async function updateReliability(){
 
   // Get all displayed reports to update
   getDisplayedReports((error,rows) => {
-    for(let i = 0; i<rows.length; i+=1){
-    
-      const report = rows[i];      
+    if(error){
+      logger.logFatal("Error at getDisplayedReports in updateReliability : "+error);
+    }else{
+      for(let i = 0; i<rows.length; i+=1){
+      
+        const report = rows[i];      
 
-      //for each report we get the votes
-      getReportVotes(report['report_dispenser_id'], (error, votes) => {
-        
-        let upvotes = 0;
-        let downvotes = 0;
+        //for each report we get the votes
+        getReportVotes(report['report_dispenser_id'], (error, votes) => {
+          
+          let upvotes = 0;
+          let downvotes = 0;
 
-        for(let j =0; j<votes.length; j+=1){
-          if(votes[j]['vote_type']){
-            upvotes+=1;
+          if(error){
+            logger.logFatal("Error at getReportVotes in updateReliability : "+error);
           }else{
-            downvotes+=1;
+
+            for(let j =0; j<votes.length; j+=1){
+              if(votes[j]['vote_type']){
+                upvotes+=1;
+              }else{
+                downvotes+=1;
+              }
+            }
+            // Obtaining number of hours since the creation of the report
+            let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
+            let end_date = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
+
+            
+            let duration = moment.duration(end_date.diff(start_date));
+            hours = duration.asDays()*24; 
+
+            // Computing reliability
+            let reliability = Math.min(100, Math.max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
+            // Update reliability of the report being treated
+
+            updateReportReliability(report['report_dispenser_id'], Math.floor(reliability));
           }
-        }
-        // Obtaining number of hours since the creation of the report
-        let start_date = moment(report['date'], 'YYYY-MM-DD HH:mm:ss');
-        let end_date = moment(new Date(), 'YYYY-MM-DD HH:mm:ss');
-
-        
-        let duration = moment.duration(end_date.diff(start_date));
-        hours = duration.asDays()*24; 
-
-        // Computing reliability
-        let reliability = Math.min(100, Math.max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
-        // Update reliability of the report being treated
-
-        updateReportReliability(report['report_dispenser_id'], Math.floor(reliability));
-      });
+        });
 
 
+      }
     }
   });
   // Update the display attributes of reports to not display unreliable report

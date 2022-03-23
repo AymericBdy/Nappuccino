@@ -27,11 +27,11 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
   const validateReport = () => {
     if(pb === "Unknown") {
       //METTRE EN ROUGE
-          ToastAndroid.showWithGravity(
-            "Faut sélectionner un truc là...",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
+      ToastAndroid.showWithGravity(
+        "Sélectionnez le type de problème",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
     } else if(auth.authState.accessToken == null) {
       ToastAndroid.showWithGravity(
         "Vous devez être connecté",

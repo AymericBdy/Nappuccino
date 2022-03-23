@@ -34,7 +34,7 @@ class CafetNewReport extends Component {
 
     getReportTypesList() {
         const id = this.state.id;
-        var searchUrl = "cafet/machine/"+this.state.type_machine+"/report_list";
+        var searchUrl = "cafet/machine/"+this.state.type_machine+"/"+id+"/report_list";
 
         console.log('Getting report type list on '+searchUrl);
 
