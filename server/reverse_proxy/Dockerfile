@@ -1,5 +1,4 @@
 FROM nginx
-COPY site /etc/nginx/html
 RUN mkdir -p /etc/nginx/certs
 RUN mkdir -p /etc/nginx/logs
 COPY certs/fullchain.pem /etc/nginx/certs/fullchain.pem

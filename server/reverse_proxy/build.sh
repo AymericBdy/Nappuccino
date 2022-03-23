@@ -12,6 +12,7 @@ version=$((version+1))
 echo ${version} > ${CONTAINER_VERSION_FILE}
 
 # Install the https certificate
+mkdir certs || true
 cp /etc/letsencrypt/live/valentin.molina.pro/fullchain.pem certs/fullchain.pem
 cp /etc/letsencrypt/live/valentin.molina.pro/privkey.pem certs/privkey.pem
 
