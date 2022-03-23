@@ -166,3 +166,6 @@ GRANT INSERT, SELECT, UPDATE ON TABLE public.report_dispenser TO api;
 GRANT USAGE, SELECT ON SEQUENCE report_dispenser_report_dispenser_id_seq TO api;
 GRANT SELECT ON TABLE public.status TO api;
 GRANT INSERT, SELECT, UPDATE ON TABLE public.users TO api;
+GRANT INSERT, SELECT, UPDATE ON TABLE public.votes TO api;
+GRANT USAGE, SELECT ON SEQUENCE votes_vote_id_seq TO api;
+
