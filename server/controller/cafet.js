@@ -13,7 +13,7 @@ exports.list_machines = async (req, res) => {
             });
         } else {
             res.status(200).send({
-                machines: result
+                machines: result,
             });
         }
     });
@@ -46,9 +46,8 @@ exports.infos_machine = async (req, res) => {
                         reliability: value.reliability,
                         upvotes: result.filter(v => v.vote_type).length,
                         downvotes: result.filter(v => !v.vote_type).length,
-                        //TODO USE THE CONNECTED USER IF THERE IS ONE
-                        user_vote: result.filter(v => v.login_ecn === 'abourdy2020').length > 0 ? 
-                        (result.filter(v => v.login_ecn === 'abourdy2020')[0].vote_type ? 1 : -1) : 0,
+                        user_vote: result.filter(v => v.login_ecn === req.user).length > 0 ? 
+                        (result.filter(v => v.login_ecn === req.user)[0].vote_type ? 1 : -1) : 0,
                     });
                 });
             }));
@@ -111,61 +110,73 @@ exports.vote_report = async (req, res) => {
     const report_id = req.body.report_id;
     const upvote = req.body.upvote;
 
-    //TODO GET FROM AUTH TOKEN !!!
-    bdd.addVoteDispenserReport(upvote, report_id, 'nap_test_user', (error) => {
-        if(error) {
-            res.status(500).send({
-                result: "Impossible d'ajouter le vote",
-                error: error,
-            });
-        } else {
-            req.params.machine_id = req.body.machine_id;
-            this.infos_machine(req, res);
-        }
-    });
+    if(!req.user) {
+        res.status(400).send({
+            result: "Vous devez être connecté",
+            error: req.auth_error,
+        });
+    } else {
+        bdd.addVoteDispenserReport(upvote, report_id, req.user, (error) => {
+            if(error) {
+                res.status(500).send({
+                    result: "Impossible d'ajouter le vote",
+                    error: error,
+                });
+            } else {
+                req.params.machine_id = req.body.machine_id;
+                this.infos_machine(req, res);
+            }
+        });
+    }
 }
 
 exports.new_report = async (req, res) => {
-    //TODO ADD IN THE BDD
+    if(!req.user) {
+        res.status(400).send({
+            result: "Vous devez être connecté",
+            error: req.auth_error,
+        });
+    } else {
+        const machine_id = req.body.machine_id;
+        const report_type = req.body.report_type;
+        const comment = req.body.comment;
+        const user = req.user;
 
-    const machine_id = req.body.machine_id;
-    const report_type = req.body.report_type;
-    const comment = req.body.comment;
-    const user = 'nap_test_user'; //TODO GET FROM AUTH TOKEN !!!
+        console.log("putting "+machine_id+" "+report_type+" "+comment);
 
-    console.log("putting "+machine_id+" "+report_type+" "+comment);
-
-    bdd.getDispenserReport(machine_id, report_type, (error, result) => {
-        if(error) {
-            res.status(500).send({
-                result: "Erreur de base de données (1)",
-                error: error,
-            });
-        } else {
-            console.log("Result is ",result);
-            console.log("Result ?",(result.length === 0));
-            if(result.length === 0) {
-                bdd.addDispenserReport("NOW()", report_type, comment, machine_id, user,
-                (error) => {
-                    if(error) {
-                        res.status(500).send({
-                            result: "Erreur de base de données (2)",
-                            error: error,
-                        });
-                    } else {
-                        res.status(200).send({
-                            result: "success"
-                        });
-                    }
+        bdd.getDispenserReport(machine_id, report_type, (error, result) => {
+            if(error) {
+                res.status(500).send({
+                    result: "Erreur de base de données (1)",
+                    error: error,
                 });
             } else {
-                res.status(200).send({
-                    result: "duplicated"
-                });
+                console.log("Result is ",result);
+                console.log("Result ?",(result.length === 0));
+                if(result.length === 0) {
+                    bdd.addDispenserReport("NOW()", report_type, comment, machine_id, user,
+                    (error) => {
+                        if(error) {
+                            res.status(500).send({
+                                result: "Erreur de base de données (2)",
+                                error: error,
+                            });
+                        } else {
+                            res.status(200).send({
+                                result: "success"
+                            });
+                        }
+                    });
+                } else {
+                    res.status(200).send({
+                        result: "duplicated"
+                    });
+                }
             }
-        }
-    });
+        });
+    }
 }
+
 exports.report_list_old = async (req, res) => {
     res.status(200).send({
         items: ["Mettez à jour l'application"]

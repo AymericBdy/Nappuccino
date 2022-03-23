@@ -10,21 +10,14 @@ exports.validatetoken = function(req, res, next) {
         const jwt = require('jsonwebtoken')
         try{
             const payload = jwt.verify(token, jwtSecretKey);
-            next(); //Continue with the request processing
+            req.user = payload.user;
         } catch(error) {
-            //console.error(error.message);
-            res.status(400).send({
-                code: 400,
-                message: "Invalid authentication token",
-                error: error
-            });
+            req.auth_error = "Invalid authentication token";
         }
     } else {
-        res.status(400).send({
-            code: 401,
-            message: "Not authenticated",
-        });
+        req.auth_error = "Not authenticated";
     }
+    next();
 }
 
 exports.signin = function(req , res) {

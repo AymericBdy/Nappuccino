@@ -31,8 +31,8 @@ async function query(query, params, callback) {
 // -------------------- Users Handling -------------------- //
 async function addEcnUser(userEcn) {
   query('INSERT INTO users(login_ecn, report_count, priviledge) VALUES($1, $2, $3)',
-    [userEcn, 0, 'user']
-  );
+    [userEcn, 0, 'user'],
+  (error, row) => {}); //TODO HANDLE ERRORS
 }
 
 async function doesEcnUserExist(userEcn, callback) {

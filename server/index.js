@@ -15,6 +15,8 @@ app.use(express.static('public'))
 // Parse requests of content-type - application/json
 app.use(bodyParser.json());
 
+app.use(require('./controller/auth').validatetoken); 
+
 app.get('/', (req, res) => {
   res.send('Nappucinno application back-end');
   logger.logInfo("GET /");
@@ -48,7 +50,7 @@ app.post('/signin', function (req, res) {
   user.signin(req,res);
 });
 
-https.createServer(
+/*https.createServer(
   {
     key: fs.readFileSync("certs/server.key"),
     cert: fs.readFileSync("certs/server.cert")
@@ -56,7 +58,7 @@ https.createServer(
   app
 ).listen(port, () => {
   logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro");
-});
+});*/
 
 function intervalFunc() {
   logger.logInfo('Updating reliability for cafeteria reports');
@@ -64,7 +66,7 @@ function intervalFunc() {
 }
 
 setInterval(intervalFunc, 1800000); //updating every 30 mins (given in ms here)
-/*
+
 app.listen(port, () => {
   logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro")
-})*/
+})
