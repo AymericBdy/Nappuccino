@@ -62,7 +62,9 @@ async function getDispensers(callback) {
   query(
     'SELECT dispenser_id, dispenser_type, dispenser_status FROM public.dispenser;',
     [],
-    callback);
+    (error, rows) => {
+      callback(error, rows);
+    });
 }
 
 async function getDispenserInfos(machineId, callback) {
@@ -70,10 +72,10 @@ async function getDispenserInfos(machineId, callback) {
     'SELECT * FROM public.report_dispenser WHERE dispenser_id=$1 AND display=TRUE ORDER BY date DESC;',
     [machineId],
     (error, rows) => {
-      logger.logInfo(rows);
       callback(error, rows);
     });
 }
+
 
 async function updateDispenserStatus(status,dispenser_id){
   query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
@@ -149,6 +151,26 @@ async function updateReportReliability(report_id, reliability){
   );
 }
 
+async function updateAllDispensersStatus(){
+  getDispensers((error,dispensers) => {
+    for(let i = 0; i<dispensers.length; i+=1){
+      
+      const disp = dispensers[i];
+
+      //for each dispenser, getting all active reports
+      getDispenserInfos(disp['dispenser_id'], (error,reports) => {
+
+        if(reports.length > 0){
+          updateDispenserStatus('issue', disp['dispenser_id'])
+        } else {
+          updateDispenserStatus('ok', disp['dispenser_id'])
+        }
+
+      });
+    }
+  });
+}
+
 async function updateReliability(){
 
   // constants for reliability calculation
@@ -189,7 +211,7 @@ async function updateReliability(){
         let reliability = Math.min(100, Math.max(0, 50 + alpha*upvotes - beta*downvotes - gamma*hours));
         // Update reliability of the report being treated
 
-        updateReportReliability(report['report_dispenser_id'], reliability);
+        updateReportReliability(report['report_dispenser_id'], Math.floor(reliability));
       });
 
 
@@ -197,7 +219,7 @@ async function updateReliability(){
   });
   // Update the display attributes of reports to not display unreliable report
   updateReportsDisplay();
-  
+  updateAllDispensersStatus();
 }
 
 
