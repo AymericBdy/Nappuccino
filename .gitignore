@@ -75,4 +75,6 @@ buck-out/
 # server logs :
 /server/logs/*
 
-indoor/ngrok.exe
+# indoor :
+server/indoor/ngrok.exe
+server/indoor/dist
