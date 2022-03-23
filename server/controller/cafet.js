@@ -39,6 +39,7 @@ exports.infos_machine = async (req, res) => {
                     console.log("Result of "+index+" is ",result);
                     if (error) reject(error);
                     else resolve({
+                        id: value.report_dispenser_id,
                         type: value.type,
                         comment: value.comment,
                         date: value.date,

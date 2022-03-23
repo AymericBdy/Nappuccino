@@ -71,7 +71,7 @@ class CafetMachineInfos extends Component {
         });
     }
 
-    sendVote(reportType, voteUp) {
+    sendVote(report_id, voteUp) {
         const auth = this.state.auth;
         if(auth.authState.accessToken == null) {
             ToastAndroid.showWithGravity(
@@ -81,7 +81,7 @@ class CafetMachineInfos extends Component {
             );
         } else {
             const id = this.state.id;
-            var searchUrl = "/machine/vote";
+            var searchUrl = "cafet/machine/vote";
             //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
             //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
             console.log('Sending vote on '+searchUrl);
@@ -89,16 +89,34 @@ class CafetMachineInfos extends Component {
                 method: 'post',
                 body: {
                   machine_id: id,
-                  report_type: reportType,
+                  report_id: report_id,
                   upvote: voteUp,
                 }
               }, auth).then(res => res.json()
             ).then(responseJson => {
                 console.log("Res is ",responseJson);
-                this.setState({
-                    ...this.state,
-                    reports: responseJson.machines,
-                })
+                if(responseJson.error) {
+                    this.setState(
+                    {
+                        ...this.state,
+                        name: "Erreur",
+                        reports:  [{
+                            type: "Erreur de chargement",
+                            comment: "Erreur de chargement des signalements, réessayez plus tard. \n Erreur: "+responseJson.result,
+                            upvotes: 0,
+                            downvotes: 0,
+                            user_vote: 0,
+                            date: new Date().getTime()/1000,
+                            reliability: "-",
+                        }],
+                        shown_report: null,
+                    })
+                } else {
+                    this.setState({
+                        ...this.state,
+                        reports: responseJson.machines,
+                    })
+                }
             }).catch(error => {
                 console.log("Erreur pour envoyer un vote et récupérer les infos de la machine "+id, error);
                 this.setState(
@@ -249,15 +267,22 @@ class CafetMachineInfos extends Component {
                 );
               } else {
                 if(report.user_vote != 1) {
-                    if(report.user_vote == -1) {
+                    /*if(report.user_vote == -1) {
                         report.downvotes = report.downvotes - 1;
                         report.user_vote = 0;
                     } else {
                         report.upvotes = report.upvotes + 1;
                         report.user_vote = 1;
-                    }
+                    }*/
                     //TODO REQUEST TO SERVER
-                    this.setState(this.state);
+                    //this.setState(this.state);
+                    ToastAndroid.showWithGravity(
+                        "Envoi du vote...",
+                        ToastAndroid.SHORT,
+                        ToastAndroid.BOTTOM
+                    );
+                    report.id = 30; //TODO REMOVE
+                    this.sendVote(report.id, true);
                 }
             }
         }
@@ -270,7 +295,7 @@ class CafetMachineInfos extends Component {
                 );
             } else {
                 if(report.user_vote != -1) {
-                    if(report.user_vote == 1) {
+                    /*if(report.user_vote == 1) {
                         report.upvotes = report.upvotes - 1;
                         report.user_vote = 0;
                     } else {
@@ -278,7 +303,14 @@ class CafetMachineInfos extends Component {
                         report.user_vote = -1;
                     }
                     //TODO REQUEST TO SERVER
-                    this.setState(this.state);
+                    this.setState(this.state);*/
+                    ToastAndroid.showWithGravity(
+                        "Envoi du vote...",
+                        ToastAndroid.SHORT,
+                        ToastAndroid.BOTTOM
+                    );
+                    report.id = 30; //TODO REMOVE
+                    this.sendVote(report.type, false);
                 }
             }
         }

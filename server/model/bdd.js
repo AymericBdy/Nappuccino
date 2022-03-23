@@ -123,13 +123,32 @@ async function addDispenserReport(date, report_type, comment, dispenser_id, logi
 
 async function addVoteDispenserReport(vote_type, report_id, login_ecn, callback){
   console.log('PArams are ',vote_type," ",report_id," ",login_ecn);
-  query('INSERT INTO votes(date, vote_type, report_dispenser_id, login_ecn) VALUES($1,$2,$3,$4)',
-     ['NOW()', vote_type, report_id, login_ecn],
-    (error, result) => {
+  
+  query('SELECT vote_id, vote_type FROM votes WHERE login_ecn=$1 AND report_dispenser_id=$2',
+    [login_ecn, report_id], (error, result) => {
       if(error) {
         callback(error);
       } else {
-        callback(null);
+        if(result.length > 0) {
+          query('DELETE FROM votes WHERE login_ecn=$1 AND report_dispenser_id=$2;',
+          [login_ecn, report_id], (error, result) => {
+            if(error) {
+              callback(error);
+            } else {
+              callback(null);
+            }
+          });
+        } else {
+          query('INSERT INTO votes(date, vote_type, report_dispenser_id, login_ecn) VALUES($1,$2,$3,$4)',
+            ['NOW()', vote_type, report_id, login_ecn],
+            (error, result) => {
+              if(error) {
+                callback(error);
+              } else {
+                callback(null);
+              }
+          });
+        }
       }
     });
 }
