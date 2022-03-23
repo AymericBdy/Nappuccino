@@ -1,0 +1,67 @@
+{
+  "name": "map-gl-indoor",
+  "description": "A MapGL plugin to visualize multi-level buildings",
+  "version": "0.4.3",
+  "main": "dist/map-gl-indoor.umd.js",
+  "module": "dist/map-gl-indoor.es.js",
+  "types": "dist/map-gl-indoor.d.ts",
+  "files": [
+    "dist"
+  ],
+  "private": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
+    "lint": "eslint --ext .js,.ts src",
+    "build-dts": "dts-bundle-generator -o dist/map-gl-indoor.d.ts src/index.ts",
+    "prepublishOnly": "npm run build && npm run build-dts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/map-gl-indoor/map-gl-indoor.git"
+  },
+  "keywords": [
+    "indoor",
+    "building",
+    "multi-level",
+    "floors",
+    "geojson",
+    "map",
+    "mapbox",
+    "mapboxgl",
+    "maplibre"
+  ],
+  "author": "Thibaud Michel",
+  "license": "MIT",
+  "peerDependencies": {
+    "mapbox-gl": ">1.10.0"
+  },
+  "devDependencies": {
+    "@map-gl-indoor/osmtogeojson": "^3.0.0-beta.5",
+    "@mapbox/mapbox-gl-geocoder": "^4.7.4",
+    "@turf/centroid": "^6.5.0",
+    "@types/geojson": "^7946.0.7",
+    "@types/mapbox__mapbox-gl-geocoder": "^4.7.1",
+    "@types/mapbox-gl": "^1.10.0",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "dts-bundle-generator": "^6.1.0",
+    "eslint": "^8.3.0",
+    "events": "^3.3.0",
+    "mapbox-gl": "^1.10.0",
+    "typescript": "^4.5.2",
+    "vite": "^2.6.14"
+  },
+  "dependencies": {
+    "@turf/bbox": "^6.5.0",
+    "@turf/destination": "^6.5.0",
+    "@turf/distance": "^6.5.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/map-gl-indoor.es.js",
+      "require": "./dist/map-gl-indoor.umd.js"
+    }
+  }
+}
