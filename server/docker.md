@@ -1,8 +1,8 @@
 # building image :
-docker build . -t nappuccino
+docker build . -t nappuccino:<version>
 
 # running image :
-docker run -p 3000:3000 -d --name nappuccino-app  nappuccino 
+docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -e NAPPUCCINO_VERSION=<version> -d --name nappuccino-app  nappuccino:<version>
 
 # to rebuild image :
 docker stop nappuccino-app
