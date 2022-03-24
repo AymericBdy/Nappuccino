@@ -57,16 +57,24 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
         }
       }, auth).then(res => res.json()
       ).then(responseJson => {
-          navigation.goBack();
-          if(route.params.infos_view) {
-            console.log("Call callback");
-            route.params.infos_view.goBack();
+          if(responseJson.error) {
+            console.log("Erreur pour envoyer un report sur la machine "+route.params.id, responseJson.error);
+            ToastAndroid.showWithGravity(
+              "Erreur",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
+          } else {
+            navigation.goBack();
+            if(route.params.infos_view) {
+              route.params.infos_view.goBack();
+            }
+            ToastAndroid.showWithGravity(
+              "Signalement envoyé !",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
           }
-          ToastAndroid.showWithGravity(
-            "Signalement envoyé !",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
       }).catch(error => {
           console.log("Erreur pour envoyer un report sur la machine "+route.params.id, error);
           ToastAndroid.showWithGravity(
