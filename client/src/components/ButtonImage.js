@@ -19,7 +19,7 @@ export default function Button({ mode, style, ...props }) {
 
 const styles = StyleSheet.create({
   button: {
-    width: '100%',
+    width: 330,
     height: 100,
     marginVertical: 10,
     paddingVertical: 2,
@@ -31,16 +31,17 @@ const styles = StyleSheet.create({
   text: {
     fontFamily:'roboto',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 16,
     lineHeight: 26,
     textAlign:'center',
     color: theme.colors.surface,
   },
   image: {
-    width: 50,
-    height: 50,
+    width: 90,
+    height: 60,
     marginBottom: 0,
     justifyContent: 'center',
+    resizeMode: 'contain'
   },
 
 })

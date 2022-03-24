@@ -81,12 +81,13 @@ export default function App() {
                     <Stack.Screen name="Dashboard"
                     options={{
                         //headerLeft: null,
-                        title: 'Navigation', //Set Header Title
+                        title: 'Menu principal', //Set Header Title
                         headerStyle: {
                             backgroundColor: theme.colors.surface, //Set Header color
                         },
                         headerTintColor: theme.colors.primary, //Set Header text color
                         headerTitleStyle: {
+                            fontFamily:'roboto',
                             fontWeight: 'bold', //Set Header text style
                         },
                     }}>
