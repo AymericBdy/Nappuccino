@@ -44,6 +44,9 @@ class LoginScreenClass extends Component {
   }
 
   loginPressed(auth) {
+    if(!this.state.buttonEnabled) {
+      return;
+    }
     //On réinisialise les erreurs et on indique que ça charge
     this.setState({
       ...this.state,
@@ -67,8 +70,9 @@ class LoginScreenClass extends Component {
       return;
     }
   
+    console.log("Auth is "+auth);
     //On se login sur le ldap
-    auth.login(this.state.user, this.state.password).then(result => {
+    auth.facade.login(this.state.user, this.state.password).then(result => {
       //console.log("Got authentication result "+result);
   
       //Si result est vide, l'authentification a marché, sinon on affiche le message d'erreur
@@ -77,7 +81,7 @@ class LoginScreenClass extends Component {
           userError: result,
           passwordError: result ? " " : "",
           buttonText: "S'authentifier",
-          buttonEnabled: !result,
+          buttonEnabled: true,
         });
     });
   }

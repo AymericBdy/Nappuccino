@@ -12,7 +12,7 @@ import {AuthContext, useAuth} from '../helpers/Auth';
 
 export default function Menu({ navigation, loggedIn }) {
   const auth = useAuth();
-  const onLogout = () => auth.logout();
+  const onLogout = () => auth.facade.logout();
   return (
     <Background>
       <ScrollView>
@@ -39,6 +39,10 @@ export default function Menu({ navigation, loggedIn }) {
         <Button mode="outlined"
         onPress={() => navigation.replace("AnnuaireScreen")}>
           ANNUAIRE DU PERSONNEL
+        </Button>
+        <Button mode="outlined"
+        onPress={() => navigation.replace("SignalementScreen")}>
+          UN PROBLEME ?
         </Button>
         <Button
           mode="outlined"

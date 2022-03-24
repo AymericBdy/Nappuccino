@@ -1,37 +1,54 @@
 pipeline {
-    agent { label "momo-linux"}
+    agent { label "momo_server"}
     stages {
         stage("clean") {
             steps {
-                sh """
+                sh '''
                     echo "Removing old files..."
-                    rm -r * || exit 0
+                    rm -r * || true
                     echo "Stoping old files..."
-                    docker stop nappuccino-app || exit 0 
+                    docker stop nappuccino-app || true 
                     echo "Clean up done."
-                """
+                '''
             }
         }
         stage("build") {
             steps {
-                sh """
+                sh '''
                     git clone https://github.com/AymericBdy/Nappuccino
                     cd Nappuccino/server
-                    mkdir certs || exit 0
+                    mkdir certs || true
                     cp /etc/letsencrypt/live/valentin.molina.pro/fullchain.pem certs/server.cert
                     cp /etc/letsencrypt/live/valentin.molina.pro/privkey.pem certs/server.key
-                    mkdir properties || exit 0
-                    cp /home/momo/Nappuccino/server/properties/bdd.json properties/bdd.json
+                    mkdir properties || true
+                    cp /home/jenkins/Nappuccino-data/bdd.json properties/bdd.json
+                    mkdir logs || true
+                    build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
+                    version="0.0.${build_counter}"
+                    echo "Building version ${version} ..."
                     git checkout backend
-                    docker build . -t nappuccino
-                """
+                    docker build . -t nappuccino:${version}
+                    build_counter=$((build_counter+1))
+                    echo ${build_counter} > /home/jenkins/Nappuccino-data/build_counter
+                    echo "Build done."
+                '''
             }
         }
         stage("run") {
             steps {
-                sh """
-                    docker run --rm -p 3000:3000 -d --name nappuccino-app  nappuccino
-                """
+                sh '''
+                    build_counter=$(cat /home/jenkins/Nappuccino-data/build_counter)
+                    build_counter=$((build_counter-1))
+                    version="0.0.${build_counter}"
+                    docker run --rm -p 3000:3000 -v /home/jenkins/Nappuccino-logs:/usr/src/app/logs -e NAPPUCCINO_VERSION=${version} -d --name nappuccino-app  nappuccino:${version}
+                '''
+            }
+        }
+        stage("test") {
+            steps {
+                sh '''
+                    docker logs nappuccino-app
+                '''
             }
         }
     }

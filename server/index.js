@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const https = require("https");
 const fs = require("fs");
 const logger = require('./utils/logger');
+const bdd = require('./model/bdd.js')
 
 //const cors = require('cors');
 
@@ -14,10 +15,12 @@ app.use(express.static('public'))
 // Parse requests of content-type - application/json
 app.use(bodyParser.json());
 
+app.use(require('./controller/auth').validatetoken); 
+
 app.get('/', (req, res) => {
-  res.send('Nappucinno application back-end')
-  logger.logInfo("Connection from : ", req.ip)
-})
+  res.send('Nappucinno application back-end');
+  logger.logInfo("GET /");
+});
 
 app.use('/ru', require('./routes/ru.route'));
 
@@ -42,6 +45,7 @@ app.get('/authtest', function (req, res) {
 
 const user = require("./controller/auth.js");
 const { fstat } = require('fs');
+const { updateReliability } = require('./model/bdd');
 app.post('/signin', function (req, res) {
   user.signin(req,res);
 });
@@ -53,9 +57,16 @@ https.createServer(
   },
   app
 ).listen(port, () => {
-  logger.logInfo(`Nappucinno back-end listening at https://valentin.molina.pro:${port}`);
+  logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro");
 });
 
+function intervalFunc() {
+  logger.logInfo('Updating reliability for cafeteria reports');
+  bdd.updateReliability();
+}
+
+setInterval(intervalFunc, 1800000); //updating every 30 mins (given in ms here)
+
 /*app.listen(port, () => {
-  logger.logInfo(`Nappucinno back-end listening at http://valentin.molina.pro:${port}`)
+  logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro")
 })*/
