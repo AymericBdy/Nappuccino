@@ -82,7 +82,7 @@ class CafetMachineInfos extends Component {
         } else {
             const id = this.state.id;
             var searchUrl = "cafet/machine/vote";
-            console.log('Sending vote on '+searchUrl);
+            //console.log('Sending vote on '+searchUrl);
             fetchBackend(searchUrl, {
                 method: 'post',
                 body: {
@@ -92,7 +92,7 @@ class CafetMachineInfos extends Component {
                 }
               }, auth).then(res => res.json()
             ).then(responseJson => {
-                console.log("Res is ",responseJson);
+                //console.log("Res is ",responseJson);
                 if(responseJson.error) {
                     this.setState(
                     {
@@ -162,9 +162,9 @@ class CafetMachineInfos extends Component {
             );
           } else {
             if(this.state.type_machine == "cafe")
-            this.state.navigation.navigate("CafetNewReportMachCaf", {id: this.state.id, type: this.state.type_machine, infos_view: {goBack}})
+            this.state.navigation.navigate("CafetNewReport", {id: this.state.id, type: this.state.type_machine, infos_view: {goBack}})
             else if(this.state.type_machine == "distrib")
-            this.state.navigation.navigate("CafetNewReportDistrib", {id: this.state.id, type: this.state.type_machine, infos_view:  {goBack}})
+            this.state.navigation.navigate("CafetNewReport", {id: this.state.id, type: this.state.type_machine, infos_view:  {goBack}})
           }
     }
 

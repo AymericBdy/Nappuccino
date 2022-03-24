@@ -15,8 +15,7 @@ import {
     AnnuaireScreen,
     MapScreen,
     CafetHome,
-    CafetNewReportMachCaf,
-    CafetNewReportDistrib,
+    CafetNewReport,
     CafetViewReports,
     SignalementScreen,
 } from './screens'
@@ -104,18 +103,7 @@ export default function App() {
                             fontWeight: 'bold', //Set Header text style
                         },
                     }}/>
-                    <Stack.Screen name="CafetNewReportMachCaf" component={CafetNewReportMachCaf} 
-                    options={{  
-                        title: 'Nouveau signalement', //Set Header Title
-                        headerStyle: {
-                            backgroundColor: theme.colors.surface, //Set Header color
-                        },
-                        headerTintColor: theme.colors.primary, //Set Header text color
-                        headerTitleStyle: {
-                            fontWeight: 'bold', //Set Header text style
-                        },
-                    }}/>
-                    <Stack.Screen name="CafetNewReportDistrib" component={CafetNewReportDistrib} 
+                    <Stack.Screen name="CafetNewReport" component={CafetNewReport} 
                     options={{  
                         title: 'Nouveau signalement', //Set Header Title
                         headerStyle: {
