@@ -229,3 +229,19 @@ exports.report_list = async (req, res) => {
         });
     }
 }
+
+exports.getmachinestatus= async (req, res) => {
+   bdd.getDispenserStatuses((error, rows) => {
+    if(error) {
+        res.status(500).send({
+            result: "Erreur de base de données",
+            error: error,
+        });
+        }
+        else{
+          res.status(200).send({
+            status_all: rows
+        });
+    }
+});
+}

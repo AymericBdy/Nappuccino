@@ -4,7 +4,7 @@ const router = express.Router();
 const logger = require('../utils/logger');
 const CafetController = require('../controller/cafet');
 
-router.get('/machines/list', CafetController.list_machines);
+router.get('/machines/list', CafetController.getmachinestatus);
 router.get('/machine/reports/:machine_id', CafetController.infos_machine);
 router.post('/machine/vote', CafetController.vote_report);
 router.post('/machine/newreport', CafetController.new_report);
