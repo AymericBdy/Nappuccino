@@ -335,6 +335,7 @@ module.exports = {
   getDispenserInfos,
   getDispenserStatus,
   getReportVotes,
+  getDispenserStatus,
   getDispenserReport,
   addVoteDispenserReport,
   getDispenserStatuses,

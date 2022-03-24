@@ -50,7 +50,7 @@ app.post('/signin', function (req, res) {
   user.signin(req,res);
 });
 
-/*https.createServer(
+https.createServer(
   {
     key: fs.readFileSync("certs/server.key"),
     cert: fs.readFileSync("certs/server.cert")
@@ -58,7 +58,7 @@ app.post('/signin', function (req, res) {
   app
 ).listen(port, () => {
   logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro");
-});*/
+});
 
 function intervalFunc() {
   logger.logInfo('Updating reliability for cafeteria reports');
@@ -67,6 +67,6 @@ function intervalFunc() {
 
 setInterval(intervalFunc, 1800000); //updating every 30 mins (given in ms here)
 
-app.listen(port, () => {
+/*app.listen(port, () => {
   logger.logInfo("Nappucinno back-end listening at https://api.nappuccino.molina.pro")
-})
+})*/
