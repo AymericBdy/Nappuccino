@@ -82,8 +82,6 @@ class CafetMachineInfos extends Component {
         } else {
             const id = this.state.id;
             var searchUrl = "cafet/machine/vote";
-            //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
-            //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
             console.log('Sending vote on '+searchUrl);
             fetchBackend(searchUrl, {
                 method: 'post',
@@ -267,15 +265,6 @@ class CafetMachineInfos extends Component {
                 );
               } else {
                 if(report.user_vote != 1) {
-                    /*if(report.user_vote == -1) {
-                        report.downvotes = report.downvotes - 1;
-                        report.user_vote = 0;
-                    } else {
-                        report.upvotes = report.upvotes + 1;
-                        report.user_vote = 1;
-                    }*/
-                    //TODO REQUEST TO SERVER
-                    //this.setState(this.state);
                     ToastAndroid.showWithGravity(
                         "Envoi du vote...",
                         ToastAndroid.SHORT,
@@ -294,15 +283,6 @@ class CafetMachineInfos extends Component {
                 );
             } else {
                 if(report.user_vote != -1) {
-                    /*if(report.user_vote == 1) {
-                        report.upvotes = report.upvotes - 1;
-                        report.user_vote = 0;
-                    } else {
-                        report.downvotes = report.downvotes + 1;
-                        report.user_vote = -1;
-                    }
-                    //TODO REQUEST TO SERVER
-                    this.setState(this.state);*/
                     ToastAndroid.showWithGravity(
                         "Envoi du vote...",
                         ToastAndroid.SHORT,
@@ -387,7 +367,6 @@ class CafetMachineInfos extends Component {
     }
 
     componentDidMount() {
-        console.log("This is showtime");
         this.getMachineInfos();
     }
 }

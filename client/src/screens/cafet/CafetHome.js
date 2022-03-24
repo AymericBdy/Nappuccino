@@ -12,7 +12,6 @@ import { fetchBackend } from '../../helpers/Backend';
 
 class CafetHome extends Component {
   state = {
-      id: -1,
       status: [],
   }
 
@@ -22,33 +21,30 @@ class CafetHome extends Component {
         ...this.state,
         navigation: props.navigation,
       }
-
   }
 
   getAllMachineStatus() {
-    var searchUrl = "cafet/machine/list";
-    //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
-    //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
-    console.log('Getting machines for '+searchUrl);
+    var searchUrl = "cafet/machines/list";
+    //console.log('Getting machines for '+searchUrl);
     fetchBackend(searchUrl, null, null).then(res => res.json()
     ).then(responseJson => {
-        console.log("Res is ",responseJson);
+        //console.log("Res is ",responseJson);
         this.setState({
             ...this.state,
-            status: responseJson.status,
-        })
+            status: responseJson.status_all,
+        });
     }).catch(error => {
         console.log("Erreur pour récupérer les infos de la machine "+id, error);
         this.setState(
         {
             ...this.state,
             status: [],
-        })
+        });
     });
 }
 
 getColorforMachine(id) {
-  const status = this.state.status.filter(machine => machine.dispenser_id==id);
+  const status = this.state.status.filter(machine => machine.dispenser_id===id)[0];
   const id_caf=[1,4,5,8];
   if (status) {
     if (status.dispenser_status==="ok" && id_caf.includes(id))  {
