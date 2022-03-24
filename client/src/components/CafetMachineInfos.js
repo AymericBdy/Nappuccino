@@ -281,7 +281,6 @@ class CafetMachineInfos extends Component {
                         ToastAndroid.SHORT,
                         ToastAndroid.BOTTOM
                     );
-                    report.id = 30; //TODO REMOVE
                     this.sendVote(report.id, true);
                 }
             }
@@ -309,8 +308,7 @@ class CafetMachineInfos extends Component {
                         ToastAndroid.SHORT,
                         ToastAndroid.BOTTOM
                     );
-                    report.id = 30; //TODO REMOVE
-                    this.sendVote(report.type, false);
+                    this.sendVote(report.id, false);
                 }
             }
         }
