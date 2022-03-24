@@ -76,6 +76,15 @@ async function getDispenserInfos(machineId, callback) {
     });
 }
 
+async function getDispenserStatus(machineId, callback) {
+  query(
+    'SELECT dispenser_status FROM public.dispenser WHERE dispenser_id=$1;',
+    [machineId],
+    (error, rows) => {
+      callback(error, rows);
+    });
+}
+
 
 async function updateDispenserStatus(status,dispenser_id){
   query('UPDATE dispenser SET dispenser_status = $1 WHERE dispenser_id = $2',
@@ -316,6 +325,7 @@ module.exports = {
   addDispenserReport,
   getDispenserInfos,
   getReportVotes,
+  getDispenserStatus,
   getDispenserReport,
   addVoteDispenserReport,
 }
