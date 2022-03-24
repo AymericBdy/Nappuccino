@@ -4,14 +4,14 @@
 import React from 'react';
 //import react in our code.
 import {View, Text, Image, TouchableOpacity} from 'react-native';
+import { DrawerActions } from '@react-navigation/native';
 //import all the components we are going to use.
 
 const MenuButton = (props) => {
   return (
     <View style={{marginLeft: 12,}}>
         <TouchableOpacity onPress={() => {
-        return props.route.name === 'MenuScreen' ? props.navigation.goBack() :
-        props.navigation.navigate("MenuScreen");}}>
+        return props.navigation.dispatch(DrawerActions.toggleDrawer());}}>
             <Image
             source={props.route.name === 'MenuScreen' ? require('../assets/menu_white_outlined.png') : require('../assets/menu_white.png')}
             style={{width: 30, height: 30}}
