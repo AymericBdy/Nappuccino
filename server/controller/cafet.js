@@ -36,7 +36,7 @@ exports.infos_machine = async (req, res) => {
         result.map((value, index) => {
             promiseArray.push(new Promise((resolve, reject) => {
                 bdd.getReportVotes(value.report_dispenser_id, (error, result) => {
-                    console.log("Result of "+index+" is ",result);
+                    //console.log("Result of "+index+" is ",result);
                     if (error) reject(error);
                     else resolve({
                         id: value.report_dispenser_id,
@@ -53,7 +53,7 @@ exports.infos_machine = async (req, res) => {
             }));
         });
         Promise.all(promiseArray).then(result => {
-            console.log("Final result is ",result);
+            //console.log("Final result is ",result);
             res.status(200).send({
                 machines: result
             });
@@ -69,54 +69,22 @@ exports.infos_machine = async (req, res) => {
             error: error,
         });
     });
-    /*bdd.getReportVotes(req.params.machine_id, (error, result) => {
-        if(error) {
-            res.status(500).send({
-                result: "Erreur de base de données (step 1)",
-                error: error,
-            });
-        } else {
-
-            res.status(200).send({
-                machines: result
-            });
-        }
-    });*/
-    /*res.status(200).send({
-	    machine_id: req.params.machine_id,
-        name: 'Machine à café sas',
-        reports: [{
-            type: "Plus de gobelets",
-            comment: "Test affichage détails",
-            upvotes: 4,
-            downvotes: 1,
-            user_vote: 0,
-            date: 1647013789,
-            reliability: 70,
-        },
-        {
-            type: "Plus de thé",
-            comment: "Test affichage détails",
-            votes: 2,
-            downvotes: 0,
-            user_vote: 1,
-            date: 1647013789,
-            reliability: 40,
-        }],
-    })*/
 }
 
 exports.vote_report = async (req, res) => {
     const report_id = req.body.report_id;
     const upvote = req.body.upvote;
 
+    console.log("Adding vote of ",req.user);
     if(!req.user) {
+        console.log("Not logged in");
         res.status(400).send({
             result: "Vous devez être connecté",
             error: req.auth_error,
         });
     } else {
         bdd.addVoteDispenserReport(upvote, report_id, req.user, (error) => {
+            console.log("Added ?", error);
             if(error) {
                 res.status(500).send({
                     result: "Impossible d'ajouter le vote",
@@ -131,7 +99,9 @@ exports.vote_report = async (req, res) => {
 }
 
 exports.new_report = async (req, res) => {
+    console.log("Adding report of ",req.user);
     if(!req.user) {
+        console.log("Not logged in");
         res.status(400).send({
             result: "Vous devez être connecté",
             error: req.auth_error,
@@ -145,6 +115,7 @@ exports.new_report = async (req, res) => {
         console.log("putting "+machine_id+" "+report_type+" "+comment);
 
         bdd.getDispenserReport(machine_id, report_type, (error, result) => {
+            console.log("Added ?", error);
             if(error) {
                 res.status(500).send({
                     result: "Erreur de base de données (1)",
@@ -154,20 +125,25 @@ exports.new_report = async (req, res) => {
                 console.log("Result is ",result);
                 console.log("Result ?",(result.length === 0));
                 if(result.length === 0) {
+                    console.log("Essaye d'ajouter");
                     bdd.addDispenserReport("NOW()", report_type, comment, machine_id, user,
                     (error) => {
+                        console.log("Added2 ?", error);
                         if(error) {
+                            console.log("Erreur");
                             res.status(500).send({
                                 result: "Erreur de base de données (2)",
                                 error: error,
                             });
                         } else {
+                            console.log("Réussi");
                             res.status(200).send({
                                 result: "success"
                             });
                         }
                     });
                 } else {
+                    console.log("Existe déjà");
                     res.status(200).send({
                         result: "duplicated"
                     });
@@ -228,4 +204,20 @@ exports.report_list = async (req, res) => {
             items: ["Mauvais type de machine", req.params.type]
         });
     }
+}
+
+exports.getmachinestatus= async (req, res) => {
+   bdd.getDispenserStatuses((error, rows) => {
+    if(error) {
+        res.status(500).send({
+            result: "Erreur de base de données",
+            error: error,
+        });
+        }
+        else{
+          res.status(200).send({
+            status_all: rows
+        });
+    }
+});
 }

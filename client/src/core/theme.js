@@ -12,5 +12,7 @@ export const theme = {
     placeholder: '#FFFFFF',
     machcafok: '#2ECC71',
     nourritureok: '#ABEBC6',
+    machcafpls: '#C70039',
+    nourriturepls: '#D98880',
   },
 }
