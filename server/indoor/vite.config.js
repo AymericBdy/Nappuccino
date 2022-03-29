@@ -3,8 +3,8 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    server : {
-        port : 4242
+    server: {
+        port: 4242
     },
     build: {
         target: 'esnext',

@@ -1,4 +1,4 @@
-import { Map as MapboxMap, Popup } from 'mapbox-gl';
+import { Map as MapboxMap, Popup, NavigationControl } from 'mapbox-gl';
 
 import accessToken from './mapbox-access-token';
 import { addIndoorTo, IndoorControl, IndoorMap, MapboxMapWithIndoor } from '../src/index';
@@ -122,5 +122,7 @@ map.on('mouseleave', 'poi-indoor-entrance', () => {
     map.getCanvas().style.cursor = '';
 });
 
+// Add zoom and rotation controls to the map.
+map.addControl(new NavigationControl(), 'bottom-right');
 
 map.addControl(customGeocoder, 'top-left');
