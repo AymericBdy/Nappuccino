@@ -162,7 +162,6 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            signingConfig signingConfigs.release
             if (nativeArchitectures) {
                 ndk {
                     abiFilters nativeArchitectures.split(',')
