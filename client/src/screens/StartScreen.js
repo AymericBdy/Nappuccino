@@ -17,7 +17,7 @@ export default function StartScreen({ navigation }) {
       <Logo />
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('AppDrawer', { screen: 'LoginScreen'})}
+        onPress={() => navigation.navigate('LoginScreen')}
       >
         S'authentifier
       </Button>

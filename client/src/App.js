@@ -11,7 +11,6 @@ import {
     Dashboard,
     TanScreen,
     RuScreen,
-    MenuScreen,
     SplashScreen,
     AnnuaireScreen,
     MapScreen,
@@ -20,7 +19,6 @@ import {
     CafetViewReports,
     SignalementScreen,
 } from './screens'
-import MenuButton from './components/MenuButton'
 import BackButton from './components/BackButton'
 import { AuthContainer, useAuth } from './helpers/Auth';
 import MenuIcon from './components/MenuIcon';
@@ -75,7 +73,7 @@ function CafetStack() {
     </Stack.Navigator>
 }
 
-function AppDrawer(initialized, authenticated) {
+function AppDrawer({initialized, authenticated}) {
     return <Drawer.Navigator
             initialRouteName={"Dashboard"}
             screenOptions={({ route, navigation }) => ({
@@ -172,14 +170,6 @@ function AppDrawer(initialized, authenticated) {
                     fontWeight: 'bold', //Set Header text style
                 },
             }} />
-
-        <Drawer.Screen name="MenuScreen"
-            options={{
-                //headerLeft: null,
-                title: '',
-            }}>
-            {(props) => <MenuScreen loggedIn={authenticated} {...props} />}
-        </Drawer.Screen>
     </Drawer.Navigator>
 }
 
