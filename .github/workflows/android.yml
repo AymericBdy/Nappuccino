@@ -21,7 +21,7 @@ jobs:
           npm install
       - name: Add signing key
         run: |
-          echo "{{secrets.napp_app_keystore}}" > /home/runner/work/Nappuccino/Nappuccino/android/app/napp_app.keystore 
+          echo "${{secrets.napp_app_keystore}}" > /home/runner/work/Nappuccino/Nappuccino/android/app/napp_app.keystore 
       - name: Fix for duplicate ressources
         run: |
            rm -rf /home/runner/work/Nappuccino/Nappuccino/android/app/src/main/res/drawable-*
