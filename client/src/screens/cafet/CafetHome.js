@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import Background from '../../components/Background'
-import { View, ScrollView, Text } from 'react-native'
+import { View, ScrollView, Text, StyleSheet } from 'react-native'
 import BackButton from '../../components/BackButton'
 import { Button } from 'react-native-paper'
 import PlanCafet from '../../components/PlanCafet'
@@ -8,7 +8,7 @@ import Header from '../../components/Header'
 import { FAB } from 'react-native-paper'
 import { theme } from '../../core/theme'
 import { getDispenserStatus } from '../../../../server/model/bdd'
-import { fetchBackend } from '../../helpers/Backend';
+import { fetchBackend } from '../../helpers/Backend'
 
 class CafetHome extends Component {
   state = {
@@ -75,8 +75,8 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            left: 2,
-            top: 10,
+            left: 55,
+            top: 30,
             minWidth:0,
             backgroundColor: this.getColorforMachine(1),
           }}
@@ -93,8 +93,8 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            left: 2,
-            top: 60,
+            left: 55,
+            top: 80,
             minWidth:0,
             backgroundColor: this.getColorforMachine(2),
           }}
@@ -111,8 +111,8 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            left: 2,
-            top: 110,
+            left:55,
+            top: 130,
             minWidth:0,
             backgroundColor: this.getColorforMachine(3),
           }}
@@ -129,10 +129,10 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            left: 2,
-            top: 160,
+            left: 55,
+            top: 180,
             minWidth:0,
-            backgroundColor: theme.colors.machcafok, // à modifier selon si la machine est en panne ou pas -- faire lien avec back de ses morts
+            backgroundColor: this.getColorforMachine(4),
           }}
           onPress={() => {
             this.state.navigation.navigate("CafetViewReports", {id: 4, type: "cafe"})
@@ -147,10 +147,10 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            right: 60,
-            bottom: 150,
+            right: 130,
+            bottom: 210,
             minWidth:0,
-            backgroundColor: theme.colors.machcafok, // à modifier selon si la machine est en panne ou pas -- faire lien avec back de ses morts
+            backgroundColor: this.getColorforMachine(5),
           }}
           onPress={() => {
             this.state.navigation.navigate("CafetViewReports", {id: 5, type: "cafe"})
@@ -165,10 +165,10 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            right: 60,
-            bottom: 100,
+            right: 130,
+            bottom: 160,
             minWidth:0,
-            backgroundColor: theme.colors.nourritureok, // à modifier selon si la machine est en panne ou pas -- faire lien avec back de ses morts
+            backgroundColor: this.getColorforMachine(6),
           }}
           onPress={() => {
             this.state.navigation.navigate("CafetViewReports", {id: 6, type: "distrib"})
@@ -183,10 +183,10 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            right: 90,
-            bottom: 45,
+            right: 160,
+            bottom: 105,
             minWidth:0,
-            backgroundColor: theme.colors.nourritureok, // à modifier selon si la machine est en panne ou pas -- faire lien avec back de ses morts
+            backgroundColor: this.getColorforMachine(7),
           }}
           onPress={() => {
             this.state.navigation.navigate("CafetViewReports", {id: 7, type: "distrib"})
@@ -201,16 +201,17 @@ render() {
             position: 'absolute',
             margin: 0,
             padding: 0,
-            right: 140,
-            bottom: 45,
+            right: 210,
+            bottom: 105,
             minWidth:0,
-            backgroundColor: theme.colors.machcafok, // à modifier selon si la machine est en panne ou pas -- faire lien avec back de ses morts
+            backgroundColor: this.getColorforMachine(8),
           }}
           onPress={() => {
             this.state.navigation.navigate("CafetViewReports", {id: 8, type: "cafe"})
           }}>
         +
         </Button>
+        
         
       </View>
       </Background>
