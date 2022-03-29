@@ -29,7 +29,7 @@ export default function Dashboard({ navigation, loggedIn }) {
         {loggedIn ? <></> : (
             <Button
             mode="contained"
-            onPress={() => navigation.navigate('LoginScreen')}
+            onPress={() => navigation.navigate('StartScreen')}
             >
             Se connecter
             </Button>

@@ -82,9 +82,7 @@ class CafetMachineInfos extends Component {
         } else {
             const id = this.state.id;
             var searchUrl = "cafet/machine/vote";
-            //"https://open.tan.fr/ewp/horairesarret.json/ECSU/2/"+direction;
-            //pb : localhost marche pas parce que c'est le localhost de l'émulateur android
-            console.log('Sending vote on '+searchUrl);
+            //console.log('Sending vote on '+searchUrl);
             fetchBackend(searchUrl, {
                 method: 'post',
                 body: {
@@ -94,7 +92,7 @@ class CafetMachineInfos extends Component {
                 }
               }, auth).then(res => res.json()
             ).then(responseJson => {
-                console.log("Res is ",responseJson);
+                //console.log("Res is ",responseJson);
                 if(responseJson.error) {
                     this.setState(
                     {
@@ -164,9 +162,9 @@ class CafetMachineInfos extends Component {
             );
           } else {
             if(this.state.type_machine == "cafe")
-            this.state.navigation.navigate("CafetNewReportMachCaf", {id: this.state.id, type: this.state.type_machine, infos_view: {goBack}})
+            this.state.navigation.navigate("CafetNewReport", {id: this.state.id, type: this.state.type_machine, infos_view: {goBack}})
             else if(this.state.type_machine == "distrib")
-            this.state.navigation.navigate("CafetNewReportDistrib", {id: this.state.id, type: this.state.type_machine, infos_view:  {goBack}})
+            this.state.navigation.navigate("CafetNewReport", {id: this.state.id, type: this.state.type_machine, infos_view:  {goBack}})
           }
     }
 
@@ -267,15 +265,6 @@ class CafetMachineInfos extends Component {
                 );
               } else {
                 if(report.user_vote != 1) {
-                    /*if(report.user_vote == -1) {
-                        report.downvotes = report.downvotes - 1;
-                        report.user_vote = 0;
-                    } else {
-                        report.upvotes = report.upvotes + 1;
-                        report.user_vote = 1;
-                    }*/
-                    //TODO REQUEST TO SERVER
-                    //this.setState(this.state);
                     ToastAndroid.showWithGravity(
                         "Envoi du vote...",
                         ToastAndroid.SHORT,
@@ -294,15 +283,6 @@ class CafetMachineInfos extends Component {
                 );
             } else {
                 if(report.user_vote != -1) {
-                    /*if(report.user_vote == 1) {
-                        report.upvotes = report.upvotes - 1;
-                        report.user_vote = 0;
-                    } else {
-                        report.downvotes = report.downvotes + 1;
-                        report.user_vote = -1;
-                    }
-                    //TODO REQUEST TO SERVER
-                    this.setState(this.state);*/
                     ToastAndroid.showWithGravity(
                         "Envoi du vote...",
                         ToastAndroid.SHORT,
@@ -387,7 +367,6 @@ class CafetMachineInfos extends Component {
     }
 
     componentDidMount() {
-        console.log("This is showtime");
         this.getMachineInfos();
     }
 }
