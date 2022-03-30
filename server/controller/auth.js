@@ -12,7 +12,7 @@ exports.validatetoken = function(req, res, next) {
             const payload = jwt.verify(token, jwtSecretKey);
             req.user = payload.user;
         } catch(error) {
-            console.log("Erreur auth with "+token+" : ",error);
+            logger.logError("Error auth with "+token+" : ",error);
             req.auth_error = "Invalid authentication token";
         }
     } else {
@@ -36,7 +36,8 @@ exports.signin = function(req , res) {
             bdd.testAndAddEcnUser(ecnUser);
 
             var now = Math.floor(Date.now() / 1000),
-                expiresIn = 3600;
+                expiresIn = 3600 * 24 * 7; //one week
+                //TODO AUTOMATIC TOKEN REFRESH
                 
             jwt.sign(data, jwtSecretKey, { algorithm: 'HS256', expiresIn : expiresIn}, function(err, token) {
                 res.header();

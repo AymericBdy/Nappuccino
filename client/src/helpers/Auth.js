@@ -136,12 +136,16 @@ export const AuthContainer = (props) => {
             return;
           }
 
-          await timeout(1000, refreshToken(token));
+          result = await timeout(1000, refreshToken(token));
+          console.log("Token result ",result);
+          if(result.auth_error) {
+            throw new Error("Erreur d'authentification : "+result.auth_error);
+          }
 
           dispatch({type: AUTHENTICATED, token: token});
         } catch (error) {
           ToastAndroid.showWithGravity(
-            "Erreur lors de la connexion, réessayez plus tard...",
+            "Erreur lors de la connexion, reconnectez-vous...",
             ToastAndroid.SHORT,
             ToastAndroid.BOTTOM
           );
