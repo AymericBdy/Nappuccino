@@ -23,7 +23,7 @@ export default function StartScreen({ navigation }) {
       </Button>
       <Button
         mode="outlined"
-        onPress={() => navigation.navigate('Dashboard')}
+        onPress={() => navigation.navigate('AppDrawer', { screen: 'Dashboard'})}
       >
         Continuer sans s'authentifier
       </Button>

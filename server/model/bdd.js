@@ -112,7 +112,7 @@ async function getDispenserReport(machineId, report_type, callback) {
     'SELECT * FROM public.report_dispenser WHERE dispenser_id=$1 AND display=TRUE AND type=$2;',
     [machineId, report_type],
     (error, rows) => {
-      logger.logInfo(rows);
+      //logger.logInfo(rows);
       callback(error, rows);
     });
 }
@@ -140,8 +140,6 @@ async function addDispenserReport(date, report_type, comment, dispenser_id, logi
 }
 
 async function addVoteDispenserReport(vote_type, report_id, login_ecn, callback){
-  console.log('PArams are ',vote_type," ",report_id," ",login_ecn);
-  
   query('SELECT vote_id, vote_type FROM votes WHERE login_ecn=$1 AND report_dispenser_id=$2',
     [login_ecn, report_id], (error, result) => {
       if(error) {

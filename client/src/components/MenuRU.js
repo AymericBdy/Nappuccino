@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import RenderHtml from 'react-native-render-html';
 import { useWindowDimensions, View, StyleSheet } from 'react-native';
 import { fetchBackend } from '../helpers/Backend';
+import { ScrollView } from 'react-native-gesture-handler';
 
 class MenuRU extends Component {
     state = {
@@ -21,7 +22,7 @@ class MenuRU extends Component {
             this.setState({ html: all })
         }).catch(error => {
             console.log(error);
-            this.setState({html: "Erreur serveur"});
+            this.setState({html: "Menu indisponible"});
         });
         return menu
     }
@@ -52,13 +53,13 @@ class MenuRU extends Component {
         }
         // console.log('render menu ru')
         // console.log(this.state)
-        return <View>
+        return <ScrollView>
             <RenderHtml
                 contentWidth={100}
                 source={this.state}
                 classesStyles={classesStyles}
             />
-        </View>
+        </ScrollView>
     }
 
     componentDidMount() {

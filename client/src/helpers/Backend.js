@@ -24,7 +24,7 @@ export function fetchBackend(url, request, auth) {
 
 function authHeader(auth) {
     // return auth header with jwt if user is logged in and request is to the api url
-    const token = auth.authState.token;
+    const token = auth.authState.accessToken;
     const isLoggedIn = !!token;
     if (isLoggedIn) {
         return { Authorization: `Bearer ${token}` };

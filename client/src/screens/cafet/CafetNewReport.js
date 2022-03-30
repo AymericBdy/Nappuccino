@@ -57,16 +57,24 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
         }
       }, auth).then(res => res.json()
       ).then(responseJson => {
-          navigation.goBack();
-          if(route.params.infos_view) {
-            console.log("Call callback");
-            route.params.infos_view.goBack();
+          if(responseJson.error) {
+            console.log("Erreur pour envoyer un report sur la machine "+route.params.id, responseJson.error);
+            ToastAndroid.showWithGravity(
+              "Erreur",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
+          } else {
+            navigation.goBack();
+            if(route.params.infos_view) {
+              route.params.infos_view.goBack();
+            }
+            ToastAndroid.showWithGravity(
+              "Signalement envoyé !",
+              ToastAndroid.SHORT,
+              ToastAndroid.BOTTOM
+            );
           }
-          ToastAndroid.showWithGravity(
-            "Signalement envoyé !",
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM
-          );
       }).catch(error => {
           console.log("Erreur pour envoyer un report sur la machine "+route.params.id, error);
           ToastAndroid.showWithGravity(
@@ -77,11 +85,16 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
       });
     }
   };
+  const name = route.params.type === 'cafe' ? 'Machine à café ' + route.params.id : "Distributeur " + route.params.id;
 
   return (
       <Background>
-      <View>
-        <Header>Quel est le problème ?</Header>
+      <ScrollView>
+        <Header>{name}</Header>
+        <Header style={{    fontSize: 21,
+    color: 'white',
+    fontWeight: 'bold',
+    paddingVertical: 12,}}>Quel est le problème ?</Header>
         <CafetNewReport machine_id={route.params.id} type_machine={route.params.type}
           selectedValue={pb} onValueChange={(value, index) => setPb(value)}>
         </CafetNewReport>
@@ -103,27 +116,7 @@ export default function CafetNewReportMachCaf({ route, navigation }) {
             onPress={validateReport}>
             Valider
         </Button>
-      </View>
+      </ScrollView>
       </Background>
   )
 }
-
-const styles = StyleSheet.create({
-    picker: {
-      marginVertical: 30,
-      width: 300,
-      padding: 10,
-      borderWidth: 1,
-      borderColor: "#666",
-      backgroundColor: theme.colors.secondary,
-    },
-    input: {
-      width:300,
-      borderBottomColor:'red',
-      borderBottomWidth:1,
-      borderWidth: 1,
-      borderColor: "#666",
-      textColor: theme.colors.primary,
-      backgroundColor: theme.colors.surface,
-  },
-  })
