@@ -161,7 +161,7 @@ exports.report_list = async (req, res) => {
             } else {
                 //filter the elements that are not yet reported
 
-                const itemList = ["Paiement sans contact impossible", "Pas de gobelets", "Pas de sucre", "Expresso", "Expresso allongé", 
+                const itemList = ["Distributeur en panne", "Paiement sans contact impossible", "Pas de gobelets", "Pas de sucre", "Expresso", "Expresso allongé", 
                 "Expresso crème", "Expresso crème allongé", "Ristretto", "Café soluble décaféiné", "Café soluble au lait", 
                 "Cappuccino", "Cappuccino noisette", "Cappuccino à la française", "Latte", "Boisson au cacao", "Viennois au cacao",
                 "Viennois praliné", "Thé vert menthe", "Thé Earl Grey", "Thé Earl Grey au lait", "Potage"];
@@ -185,8 +185,34 @@ exports.report_list = async (req, res) => {
             }
         });
     } else if(req.params.type === 'distrib') {
-        res.status(200).send({
-            items: ["On veut de la bouffe", "Où est la bouffe", "La bouffe ?"]
+        bdd.getDispenserInfos(req.params.machine_id, (error, result) => {
+            if(error) {
+                res.status(500).send({
+                    result: "Erreur de base de données",
+                    error: error,
+                });
+            } else {
+                //filter the elements that are not yet reported
+
+                const itemList = ["Distributeur en panne", "Paiement sans contact impossible", "Plus de gauffres", "Liste à compléter"];
+
+                //console.log("Building from ",result);
+
+                const availableItems = [];
+                itemList.map((value, index) => {
+                    if(!(!!result.find(report => {
+                        return report.type === value;
+                    }))) {
+                        availableItems.push(value);
+                    }
+                });
+
+                //console.log("Built item list ",availableItems);
+
+                res.status(200).send({
+                    items: availableItems
+                });
+            }
         });
     } else {
         res.status(400).send({
