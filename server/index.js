@@ -42,7 +42,7 @@ app.get('/authtest', function (req, res) {
     if(req.auth_error) {
       res.status(400).send({auth_error: req.auth_error});
     } else {
-      res.status(200).send();
+      res.status(200).send({});
     }
   });
 })
