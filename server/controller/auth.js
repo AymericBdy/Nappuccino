@@ -12,6 +12,7 @@ exports.validatetoken = function(req, res, next) {
             const payload = jwt.verify(token, jwtSecretKey);
             req.user = payload.user;
         } catch(error) {
+            console.log("Erreur auth with "+token+" : ",error);
             req.auth_error = "Invalid authentication token";
         }
     } else {
