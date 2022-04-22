@@ -1,4 +1,4 @@
-FROM node:17-alpine
+FROM node:17-alpine as static
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -18,5 +18,13 @@ COPY . .
 # Generate files for web server
 RUN npx vite build
 
-EXPOSE 4242
-CMD [ "bash" ]
+############
+
+FROM nginx:latest as webserver
+# Copy the files to the webserver
+COPY --from=static /usr/src/app/dist/assets /usr/share/nginx/html/assets
+COPY --from=static /usr/src/app/dist/example/simple-map-2.html /usr/share/nginx/html/index.html
+# And add the maps
+COPY example/maps/ /usr/share/nginx/html/maps/
+
+EXPOSE 80
